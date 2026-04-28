@@ -1,0 +1,16 @@
+{
+  "block.sologates.gate_e": "E-Rank Gate",
+  "block.sologates.gate_c": "C-Rank Gate",
+  "block.sologates.gate_b": "B-Rank Gate",
+  "block.sologates.gate_a": "A-Rank Gate",
+  "block.sologates.gate_s": "S-Rank Gate",
+  "item.sologates.bronze_coin": "Bronze Coin",
+  "item.sologates.silver_coin": "Silver Coin",
+  "item.sologates.gold_coin": "Gold Coin",
+  "item.sologates.platinum_coin": "Platinum Coin",
+  "item.sologates.rank_e_helmet": "E-Rank Hunter Helmet",
+  "item.sologates.rank_e_chestplate": "E-Rank Hunter Chestplate",
+  "item.sologates.rank_e_leggings": "E-Rank Hunter Leggings",
+  "item.sologates.rank_e_boots": "E-Rank Hunter Boots",
+  "itemGroup.sologates.solo_gates": "Solo Gates"
+}
