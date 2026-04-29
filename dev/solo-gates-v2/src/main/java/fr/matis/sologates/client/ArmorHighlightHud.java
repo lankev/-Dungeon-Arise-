@@ -1,0 +1,69 @@
+package fr.matis.sologates.client;
+
+import fr.matis.sologates.SoloGates;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+
+@OnlyIn(Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = SoloGates.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+public class ArmorHighlightHud {
+
+    @SubscribeEvent
+    public static void onRenderArmorOverlay(RenderGuiOverlayEvent.Post event) {
+        if (event.getOverlay() != VanillaGuiOverlay.ARMOR_LEVEL.type()) return;
+
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null || player.isCreative() || player.isSpectator()) return;
+        if (!hasBetterModArmorInInventory(player)) return;
+
+        // Pulsing alpha: oscillates between 30 and 110
+        float pulse = (float)(Math.sin(System.currentTimeMillis() / 350.0) * 0.5 + 0.5);
+        int alpha = (int)(30 + pulse * 80);
+
+        int sw = event.getWindow().getGuiScaledWidth();
+        int sh = event.getWindow().getGuiScaledHeight();
+        // Armor bar position (vanilla): bottom-left of the 10-icon row
+        int x = sw / 2 - 91;
+        int y = sh - 49;
+
+        GuiGraphics g = event.getGuiGraphics();
+        // Semi-transparent red fill
+        g.fill(x - 1, y - 1, x + 82, y + 10, (alpha << 24) | 0xFF2200);
+        // Solid red border (1px)
+        int border = Math.min(alpha + 60, 200);
+        g.fill(x - 1, y - 1, x + 82, y,      (border << 24) | 0xFF2200); // top
+        g.fill(x - 1, y + 9, x + 82, y + 10, (border << 24) | 0xFF2200); // bottom
+        g.fill(x - 1, y - 1, x,      y + 10, (border << 24) | 0xFF2200); // left
+        g.fill(x + 81, y - 1, x + 82, y + 10, (border << 24) | 0xFF2200); // right
+    }
+
+    private static boolean hasBetterModArmorInInventory(Player player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (!(stack.getItem() instanceof ArmorItem armorItem)) continue;
+
+            ResourceLocation key = ForgeRegistries.ITEMS.getKey(armorItem);
+            if (key == null || !SoloGates.MOD_ID.equals(key.getNamespace())) continue;
+
+            EquipmentSlot slot = armorItem.getEquipmentSlot();
+            ItemStack equipped = player.getItemBySlot(slot);
+            int curDef = equipped.getItem() instanceof ArmorItem a ? a.getDefense() : 0;
+
+            if (armorItem.getDefense() > curDef) return true;
+        }
+        return false;
+    }
+}
