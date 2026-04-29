@@ -20,5 +20,6 @@ public class SoloGates {
         ModBlocks.ITEMS.register(modBus);
         ModBlocks.CREATIVE_TABS.register(modBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SoloGatesConfig.SPEC);
+        SoloGatesCriteria.register();
     }
 }

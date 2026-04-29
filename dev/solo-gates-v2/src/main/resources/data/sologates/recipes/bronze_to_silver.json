@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {"item": "sologates:bronze_coin"}
+  },
+  "result": {"item": "sologates:silver_coin", "count": 1}
+}

@@ -1,0 +1,18 @@
+{
+  "parent": "sologates:veteran",
+  "display": {
+    "icon": {"item": "sologates:gold_coin"},
+    "title": {"translate": "advancement.sologates.elite.title"},
+    "description": {"translate": "advancement.sologates.elite.desc"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "milestone": {
+      "trigger": "sologates:gate_milestone",
+      "conditions": {"count": 40}
+    }
+  }
+}

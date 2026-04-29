@@ -1124,12 +1124,15 @@ public final class GateManager {
         }
         overworld.playSound(null, chestPos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1.4f, 0.8f);
 
-        // Give XP + record completion for players in dungeon
+        // Give XP + record completion + fire advancement triggers for players in dungeon
         if (dungeon != null) {
             PlayerSavedData psd = PlayerSavedData.get(overworld.getServer());
             for (ServerPlayer p : dungeon.getEntitiesOfClass(ServerPlayer.class,
                     new AABB(gate.dungeonPos).inflate(64, 16, 64))) {
-                psd.getOrCreate(p.getUUID()).recordCompletion(gate.rank);
+                PlayerData pd = psd.getOrCreate(p.getUUID());
+                pd.recordCompletion(gate.rank);
+                SoloGatesCriteria.GATE_COMPLETE.trigger(p, gate.rank, gate.bossGate);
+                SoloGatesCriteria.GATE_MILESTONE.trigger(p, pd.totalCompletions());
             }
             psd.markDirty();
         }

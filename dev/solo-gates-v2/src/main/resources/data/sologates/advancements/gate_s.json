@@ -1,0 +1,18 @@
+{
+  "parent": "sologates:gate_a",
+  "display": {
+    "icon": {"item": "sologates:gate_s"},
+    "title": {"translate": "advancement.sologates.gate_s.title"},
+    "description": {"translate": "advancement.sologates.gate_s.desc"},
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "complete": {
+      "trigger": "sologates:gate_complete",
+      "conditions": {"rank": "S"}
+    }
+  }
+}

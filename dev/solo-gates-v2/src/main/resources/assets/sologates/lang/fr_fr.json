@@ -70,5 +70,26 @@
   "sologates.sign.return.line1": "Clique sur",
   "sologates.sign.return.line2": "le portail",
   "sologates.sign.return.line3": "pour sortir",
-  "sologates.sign.return.line4": "+ recompense"
+  "sologates.sign.return.line4": "+ recompense",
+
+  "advancement.sologates.root.title": "Solo Gates",
+  "advancement.sologates.root.desc": "Entrez dans le monde des Solo Gates",
+  "advancement.sologates.gate_e.title": "Premiers Pas",
+  "advancement.sologates.gate_e.desc": "Terminez votre premier portail de rang E",
+  "advancement.sologates.gate_c.title": "Chasseur en Herbe",
+  "advancement.sologates.gate_c.desc": "Terminez un portail de rang C",
+  "advancement.sologates.gate_b.title": "Combattant Aguerri",
+  "advancement.sologates.gate_b.desc": "Terminez un portail de rang B",
+  "advancement.sologates.gate_a.title": "Chasseur Elite",
+  "advancement.sologates.gate_a.desc": "Terminez un portail de rang A",
+  "advancement.sologates.gate_s.title": "Predateur Ultime",
+  "advancement.sologates.gate_s.desc": "Terminez un portail de rang S",
+  "advancement.sologates.boss_gate.title": "Tueur de Boss",
+  "advancement.sologates.boss_gate.desc": "Eliminez le boss d'un portail Boss de rang S",
+  "advancement.sologates.veteran.title": "Chasseur Veteran",
+  "advancement.sologates.veteran.desc": "Terminez 10 portails au total",
+  "advancement.sologates.elite.title": "Chasseur rang A",
+  "advancement.sologates.elite.desc": "Terminez 40 portails au total",
+  "advancement.sologates.legend.title": "Chasseur rang S",
+  "advancement.sologates.legend.desc": "Terminez 100 portails au total"
 }

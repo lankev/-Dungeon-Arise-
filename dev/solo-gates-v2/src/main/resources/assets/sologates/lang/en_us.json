@@ -70,5 +70,26 @@
   "sologates.sign.return.line1": "Click on",
   "sologates.sign.return.line2": "the portal",
   "sologates.sign.return.line3": "to exit",
-  "sologates.sign.return.line4": "+ reward"
+  "sologates.sign.return.line4": "+ reward",
+
+  "advancement.sologates.root.title": "Solo Gates",
+  "advancement.sologates.root.desc": "Enter the world of Solo Gates",
+  "advancement.sologates.gate_e.title": "First Steps",
+  "advancement.sologates.gate_e.desc": "Complete your first E-Rank gate",
+  "advancement.sologates.gate_c.title": "Rising Hunter",
+  "advancement.sologates.gate_c.desc": "Complete a C-Rank gate",
+  "advancement.sologates.gate_b.title": "Seasoned Fighter",
+  "advancement.sologates.gate_b.desc": "Complete a B-Rank gate",
+  "advancement.sologates.gate_a.title": "Elite Hunter",
+  "advancement.sologates.gate_a.desc": "Complete an A-Rank gate",
+  "advancement.sologates.gate_s.title": "Apex Predator",
+  "advancement.sologates.gate_s.desc": "Complete an S-Rank gate",
+  "advancement.sologates.boss_gate.title": "Boss Slayer",
+  "advancement.sologates.boss_gate.desc": "Defeat the boss inside an S-Rank Boss Gate",
+  "advancement.sologates.veteran.title": "Veteran Hunter",
+  "advancement.sologates.veteran.desc": "Complete 10 gates in total",
+  "advancement.sologates.elite.title": "A-Rank Hunter",
+  "advancement.sologates.elite.desc": "Complete 40 gates in total",
+  "advancement.sologates.legend.title": "S-Rank Hunter",
+  "advancement.sologates.legend.desc": "Complete 100 gates in total"
 }

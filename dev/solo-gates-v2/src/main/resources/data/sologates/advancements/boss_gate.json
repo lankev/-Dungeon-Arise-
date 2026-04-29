@@ -1,0 +1,18 @@
+{
+  "parent": "sologates:gate_s",
+  "display": {
+    "icon": {"item": "minecraft:nether_star"},
+    "title": {"translate": "advancement.sologates.boss_gate.title"},
+    "description": {"translate": "advancement.sologates.boss_gate.desc"},
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "complete": {
+      "trigger": "sologates:gate_complete",
+      "conditions": {"boss_only": true}
+    }
+  }
+}

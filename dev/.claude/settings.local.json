@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($dirs = Get-ChildItem -Path \"c:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\" -Directory; $dirs | Select-Object Name, @{Name=\"ItemCount\"; Expression={\\(Get-ChildItem -Path $_.FullName -Recurse -File\\).Count}} | Format-Table -AutoSize)",
+      "PowerShell(python --version)",
+      "PowerShell(python -c \"from PIL import Image; print\\('ok'\\)\")"
+    ]
+  }
+}
