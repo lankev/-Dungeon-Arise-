@@ -1124,7 +1124,6 @@ public final class GateManager {
         }
         overworld.playSound(null, chestPos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1.4f, 0.8f);
 
-        // Give XP + record completion + fire advancement triggers for players in dungeon
         if (dungeon != null) {
             PlayerSavedData psd = PlayerSavedData.get(overworld.getServer());
             for (ServerPlayer p : dungeon.getEntitiesOfClass(ServerPlayer.class,

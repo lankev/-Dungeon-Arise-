@@ -12,15 +12,20 @@ import net.minecraft.util.GsonHelper;
 import java.util.Optional;
 
 public class GateCompleteTrigger extends SimpleCriterionTrigger<GateCompleteTrigger.TriggerInstance> {
-    public static final ResourceLocation ID = new ResourceLocation("sologates", "gate_complete");
+    public static final ResourceLocation ID = new ResourceLocation(SoloGates.MOD_ID, "gate_complete");
 
     @Override
     public ResourceLocation getId() { return ID; }
 
     @Override
-    protected TriggerInstance createInstance(JsonObject json, Optional<ContextAwarePredicate> player, DeserializationContext ctx) {
-        String rank = GsonHelper.getAsString(json, "rank", "ANY");
+    protected TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext ctx) {
+        String rankStr = GsonHelper.getAsString(json, "rank", "ANY");
         boolean bossOnly = GsonHelper.getAsBoolean(json, "boss_only", false);
+        Optional<GateRank> rank = Optional.empty();
+        if (!rankStr.equals("ANY")) {
+            try { rank = Optional.of(GateRank.valueOf(rankStr.toUpperCase())); }
+            catch (IllegalArgumentException ignored) {}
+        }
         return new TriggerInstance(player, rank, bossOnly);
     }
 
@@ -29,10 +34,10 @@ public class GateCompleteTrigger extends SimpleCriterionTrigger<GateCompleteTrig
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {
-        private final String rank;
+        private final Optional<GateRank> rank;
         private final boolean bossOnly;
 
-        public TriggerInstance(Optional<ContextAwarePredicate> player, String rank, boolean bossOnly) {
+        public TriggerInstance(ContextAwarePredicate player, Optional<GateRank> rank, boolean bossOnly) {
             super(ID, player);
             this.rank = rank;
             this.bossOnly = bossOnly;
@@ -40,7 +45,7 @@ public class GateCompleteTrigger extends SimpleCriterionTrigger<GateCompleteTrig
 
         public boolean matches(GateRank rank, boolean bossGate) {
             if (bossOnly && !bossGate) return false;
-            return this.rank.equals("ANY") || this.rank.equalsIgnoreCase(rank.name());
+            return this.rank.isEmpty() || this.rank.get() == rank;
         }
     }
 }

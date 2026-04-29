@@ -3,7 +3,25 @@
     "allow": [
       "PowerShell($dirs = Get-ChildItem -Path \"c:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\" -Directory; $dirs | Select-Object Name, @{Name=\"ItemCount\"; Expression={\\(Get-ChildItem -Path $_.FullName -Recurse -File\\).Count}} | Format-Table -AutoSize)",
       "PowerShell(python --version)",
-      "PowerShell(python -c \"from PIL import Image; print\\('ok'\\)\")"
+      "PowerShell(python -c \"from PIL import Image; print\\('ok'\\)\")",
+      "PowerShell(python -c \"from PIL import Image; img=Image.open\\(r'c:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\armor_reference.png'\\); print\\(img.size\\)\")",
+      "PowerShell(& \"C:\\\\Program Files\\\\Git\\\\bin\\\\git.exe\" -C \"c:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\" diff HEAD --stat 2>&1)",
+      "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\CurseForge\" -Recurse -Filter \"java.exe\" -ErrorAction SilentlyContinue | Select-Object -First 5 FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\matis\\\\curseforge\" -ErrorAction SilentlyContinue | Select-Object Name, FullName; Get-ChildItem \"$env:APPDATA\\\\CurseForge\" -ErrorAction SilentlyContinue | Select-Object Name, FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\matis\\\\curseforge\\\\minecraft\\\\Install\\\\java\\\\Jre_21\\\\bin\" | Select-Object Name | Where-Object {$_.Name -match \"java|javac\"})",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\Eclipse Adoptium\", \"C:\\\\Program Files\\\\Java\", \"C:\\\\Program Files\\\\Microsoft\", \"C:\\\\Program Files\\\\Zulu\", \"C:\\\\Program Files\\\\BellSoft\" -ErrorAction SilentlyContinue | Select-Object FullName; dir \"C:\\\\Program Files\" | Where-Object {$_.Name -match -join \"java|jdk|jre\"} | Select-Object Name)",
+      "PowerShell(cmd /c \"where javac\" 2>&1)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\curseforge\\\\minecraft\\\\Instances\\\\level`\"\")",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\.gradle`\" /b\" 2>&1)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\.gradle`\" /b\" 2>&1)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\AppData\\\\Local\\\\JetBrains`\" /b\" 2>&1)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Program Files\\\\JetBrains`\" /b\" 2>&1)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\.vscode\\\\extensions\\\\redhat.java-1.54.0-win32-x64\\\\jre`\" /b\" 2>&1)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Users\\\\matis\\\\.vscode\\\\extensions\\\\redhat.java-1.54.0-win32-x64\\\\jre\\\\21.0.10-win32-x86_64\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; cd \"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\"; .\\\\gradlew build --no-daemon 2>&1)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2`\" /b\")",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\gradle\\\\wrapper`\" /b\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Users\\\\matis\\\\.vscode\\\\extensions\\\\redhat.java-1.54.0-win32-x64\\\\jre\\\\21.0.10-win32-x86_64\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; Invoke-WebRequest -Uri \"https://raw.githubusercontent.com/gradle/gradle/v8.8.0/gradle/wrapper/gradle-wrapper.jar\" -OutFile \"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\gradle\\\\wrapper\\\\gradle-wrapper.jar\"; Write-Host \"Telechargement termine\")",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\build\\\\libs`\" /b\")"
     ]
   }
 }
