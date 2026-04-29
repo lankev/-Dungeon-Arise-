@@ -31,7 +31,7 @@ public enum GateRank {
     public ChatFormatting color() { return color; }
 
     public MutableComponent displayName() {
-        return Component.literal("Portail rang " + name()).withStyle(color);
+        return Component.translatable("sologates.rank." + name().toLowerCase()).withStyle(color);
     }
 
     public List<? extends String> mobs() {

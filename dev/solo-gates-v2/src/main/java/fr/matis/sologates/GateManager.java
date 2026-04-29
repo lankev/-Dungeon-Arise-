@@ -1,12 +1,15 @@
 package fr.matis.sologates;
 
+import com.mojang.logging.LogUtils;
 import fr.matis.sologates.registry.ModBlocks;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.slf4j.Logger;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -37,6 +40,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.*;
 
 public final class GateManager {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     public static final ResourceKey<Level> DUNGEON_LEVEL = ResourceKey.create(
         Registries.DIMENSION, new ResourceLocation("sologates", "dungeon"));
 
@@ -116,10 +121,9 @@ public final class GateManager {
                 new AABB(gate.dungeonPos).inflate(64, 16, 64));
             if (inside.isEmpty()) continue;
             int remaining = gate.mobs.size();
-            Component msg = Component.literal("[" + gate.rank.name() + "] Ennemis restants : ")
-                .withStyle(gate.rank.color())
-                .append(Component.literal(String.valueOf(remaining))
-                    .withStyle(net.minecraft.ChatFormatting.WHITE));
+            Component msg = Component.translatable("sologates.message.mob_count",
+                Component.literal(gate.rank.name()).withStyle(gate.rank.color()),
+                Component.literal(String.valueOf(remaining)).withStyle(ChatFormatting.WHITE));
             for (ServerPlayer p : inside) {
                 p.displayClientMessage(msg, true);
             }
@@ -146,12 +150,12 @@ public final class GateManager {
             .min(Comparator.comparingDouble(r -> r.overworldPos.distSqr(clickedPos)));
 
         if (gateOpt.isEmpty()) {
-            player.displayClientMessage(Component.literal("Ce portail n'est pas stabilise."), true);
+            player.displayClientMessage(Component.translatable("sologates.message.gate_not_stabilized"), true);
             return;
         }
         ServerLevel dungeon = overworld.getServer().getLevel(DUNGEON_LEVEL);
         if (dungeon == null) {
-            player.displayClientMessage(Component.literal("La dimension des donjons n'est pas chargee."), false);
+            player.displayClientMessage(Component.translatable("sologates.message.dimension_not_loaded"), false);
             return;
         }
         GateRecord record = gateOpt.get();
@@ -169,17 +173,17 @@ public final class GateManager {
         long timeLeft = Math.min(SoloGatesConfig.GATE_LIFETIME_SECONDS.get(), 300) * 20L
             - (overworld.getGameTime() - record.createdTick);
         long secsLeft = timeLeft / 20;
-        String info = String.format("Rang %s | %d ennemis | %ds restants",
-            record.rank.name(), mobs, secsLeft);
-        if (record.bossGate) info = "[BOSS] " + info;
+        String infoKey = record.bossGate ? "sologates.message.boss_gate_info" : "sologates.message.gate_info";
         player.displayClientMessage(
-            Component.literal(info).withStyle(record.rank.color()), false);
+            Component.translatable(infoKey, record.rank.displayName(),
+                Component.literal(String.valueOf(mobs)),
+                Component.literal(String.valueOf(secsLeft))), false);
     }
 
     public static boolean spawnManualGate(ServerPlayer player, GateRank rank) {
         ServerLevel overworld = player.serverLevel();
         if (!overworld.dimension().equals(Level.OVERWORLD)) {
-            player.displayClientMessage(Component.literal("Les portails doivent etre crees dans l'Overworld."), false);
+            player.displayClientMessage(Component.translatable("sologates.message.gate_must_be_overworld"), false);
             return false;
         }
         BlockPos base = player.blockPosition().relative(player.getDirection(), 5);
@@ -194,15 +198,14 @@ public final class GateManager {
         buildDungeon(overworld.getServer().getLevel(DUNGEON_LEVEL), gate);
         data.addGate(gate);
         overworld.playSound(null, pos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 2f, 0.6f);
-        player.displayClientMessage(rank.displayName()
-            .append(Component.literal(" cree devant toi.")), false);
+        player.displayClientMessage(Component.translatable("sologates.message.gate_created", rank.displayName()), false);
         return true;
     }
 
     public static boolean spawnManualBossGate(ServerPlayer player) {
         ServerLevel overworld = player.serverLevel();
         if (!overworld.dimension().equals(Level.OVERWORLD)) {
-            player.displayClientMessage(Component.literal("Les portails boss doivent etre crees dans l'Overworld."), false);
+            player.displayClientMessage(Component.translatable("sologates.message.boss_gate_must_be_overworld"), false);
             return false;
         }
         BlockPos base = player.blockPosition().relative(player.getDirection(), 5);
@@ -218,7 +221,7 @@ public final class GateManager {
         buildDungeon(overworld.getServer().getLevel(DUNGEON_LEVEL), gate);
         data.addGate(gate);
         overworld.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 0.8f, 1.5f);
-        player.displayClientMessage(Component.literal("Portail boss de rang S cree devant toi."), false);
+        player.displayClientMessage(Component.translatable("sologates.message.boss_gate_created"), false);
         return true;
     }
 
@@ -244,7 +247,7 @@ public final class GateManager {
             .min(Comparator.comparingDouble(r -> r.dungeonPos.offset(0, 1, -5).distSqr(clickedPos)));
 
         if (gateOpt.isEmpty()) {
-            player.displayClientMessage(Component.literal("Ce portail de retour n'est pas actif."), true);
+            player.displayClientMessage(Component.translatable("sologates.message.return_gate_inactive"), true);
             return;
         }
         GateRecord record = gateOpt.get();
@@ -342,8 +345,8 @@ public final class GateManager {
             overworld.playSound(null, pos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 2f, 0.6f);
 
             Component msg = bossGate
-                ? Component.literal("[BOSS] Un portail de rang S est apparu pres de toi !").withStyle(net.minecraft.ChatFormatting.RED)
-                : rank.displayName().append(Component.literal(" est apparu non loin de toi."));
+                ? Component.translatable("sologates.message.boss_gate_appeared").withStyle(ChatFormatting.RED)
+                : Component.translatable("sologates.message.gate_appeared", rank.displayName());
             player.displayClientMessage(msg, false);
             return Optional.of(rank);
         }
@@ -373,7 +376,8 @@ public final class GateManager {
     }
 
     private static boolean canPlaceGate(ServerLevel level, BlockPos pos) {
-        if (!level.hasChunk(new ChunkPos(pos).x, new ChunkPos(pos).z)) return false;
+        ChunkPos chunkPos = new ChunkPos(pos);
+        if (!level.hasChunk(chunkPos.x, chunkPos.z)) return false;
         for (int x = -6; x <= 6; x++) {
             for (int y = 0; y <= 10; y++) {
                 for (int z = -1; z <= 3; z++) {
@@ -1107,7 +1111,7 @@ public final class GateManager {
             for (ServerPlayer player : dungeon.getEntitiesOfClass(ServerPlayer.class,
                     new AABB(gate.dungeonPos).inflate(64, 16, 64))) {
                 player.displayClientMessage(
-                    Component.literal("Donjon termine. Utilise le portail de retour pour sortir.").withStyle(net.minecraft.ChatFormatting.GREEN), false);
+                    Component.translatable("sologates.message.dungeon_complete").withStyle(ChatFormatting.GREEN), false);
             }
         }
         removeGateBlocks(overworld, gate.overworldPos);
@@ -1147,10 +1151,10 @@ public final class GateManager {
         BlockEntity be = dungeon.getBlockEntity(signPos);
         if (be instanceof SignBlockEntity sign) {
             SignText text = sign.getText(true)
-                .setMessage(0, Component.literal("Clique sur"))
-                .setMessage(1, Component.literal("le portail"))
-                .setMessage(2, Component.literal("pour sortir"))
-                .setMessage(3, Component.literal("+ recompense"));
+                .setMessage(0, Component.translatable("sologates.sign.return.line1"))
+                .setMessage(1, Component.translatable("sologates.sign.return.line2"))
+                .setMessage(2, Component.translatable("sologates.sign.return.line3"))
+                .setMessage(3, Component.translatable("sologates.sign.return.line4"));
             sign.setText(text, true);
         }
     }
@@ -1179,7 +1183,7 @@ public final class GateManager {
             AABB arena = new AABB(gate.dungeonPos).inflate(64, 16, 64);
             for (ServerPlayer player : dungeon.getEntitiesOfClass(ServerPlayer.class, arena)) {
                 teleportToOverworld(player, gate);
-                player.displayClientMessage(Component.literal("Le portail s'est referme.").withStyle(net.minecraft.ChatFormatting.RED), false);
+                player.displayClientMessage(Component.translatable("sologates.message.gate_closed").withStyle(ChatFormatting.RED), false);
             }
             for (UUID mobId : gate.mobs) {
                 Entity mob = dungeon.getEntity(mobId);
@@ -1235,8 +1239,8 @@ public final class GateManager {
             if (!player.isDeadOrDying()) {
                 teleportToOverworld(player, gate);
                 player.displayClientMessage(
-                    Component.literal("Le donjon s'effondre ! Les monstres envahissent l'Overworld !")
-                        .withStyle(net.minecraft.ChatFormatting.DARK_RED), false);
+                    Component.translatable("sologates.message.dungeon_collapse")
+                        .withStyle(ChatFormatting.DARK_RED), false);
             }
         }
         clearDungeonSpace(dungeon, gate.dungeonPos);

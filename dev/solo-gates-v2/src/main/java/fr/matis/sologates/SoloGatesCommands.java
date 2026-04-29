@@ -40,10 +40,10 @@ public final class SoloGatesCommands {
     private static int spawnBossGate(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         if (!GateManager.spawnManualBossGate(player)) {
-            source.sendFailure(Component.literal("Impossible de placer un portail boss ici. Cherche une zone plate et degagee."));
+            source.sendFailure(Component.translatable("sologates.command.boss_portal_no_place"));
             return 0;
         }
-        source.sendSuccess(() -> Component.literal("Portail boss cree."), true);
+        source.sendSuccess(() -> Component.translatable("sologates.command.boss_portal_created"), true);
         return 1;
     }
 
@@ -53,42 +53,53 @@ public final class SoloGatesCommands {
         try {
             rank = GateRank.valueOf(rankName.toUpperCase());
         } catch (IllegalArgumentException e) {
-            source.sendFailure(Component.literal("Rang inconnu. Utilise E, C, B, A ou S."));
+            source.sendFailure(Component.translatable("sologates.command.rank_unknown"));
             return 0;
         }
         if (!GateManager.spawnManualGate(player, rank)) {
-            source.sendFailure(Component.literal("Impossible de placer un portail ici. Cherche une zone plate et degagee."));
+            source.sendFailure(Component.translatable("sologates.command.portal_no_place"));
             return 0;
         }
-        source.sendSuccess(() -> Component.literal("Portail rang " + rank.name() + " cree."), true);
+        source.sendSuccess(() -> Component.translatable("sologates.command.portal_created", rank.name()), true);
         return 1;
     }
 
     private static int leaveGate(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         if (GateManager.leaveDungeon(player)) {
-            source.sendSuccess(() -> Component.literal("Retour dans l'Overworld."), false);
+            source.sendSuccess(() -> Component.translatable("sologates.command.leave_success"), false);
             return 1;
         }
-        source.sendFailure(Component.literal("Tu n'es pas dans un donjon Solo Gates."));
+        source.sendFailure(Component.translatable("sologates.command.not_in_dungeon"));
         return 0;
     }
 
     private static int showStatus(CommandSourceStack source) {
         GateSavedData data = GateSavedData.get(source.getServer());
         if (data.gates().isEmpty()) {
-            source.sendSuccess(() -> Component.literal("Aucun portail actif.").withStyle(ChatFormatting.GRAY), false);
+            source.sendSuccess(() -> Component.translatable("sologates.command.no_active_gates")
+                .withStyle(ChatFormatting.GRAY), false);
             return 1;
         }
-        source.sendSuccess(() -> Component.literal("=== Portails actifs ===").withStyle(ChatFormatting.GOLD), false);
+        source.sendSuccess(() -> Component.translatable("sologates.command.active_gates_header")
+            .withStyle(ChatFormatting.GOLD), false);
         for (GateRecord gate : data.gates()) {
-            String info = String.format("[%s] Pos: %d,%d,%d | Mobs: %d | %s%s",
-                gate.rank.name(),
-                gate.overworldPos.getX(), gate.overworldPos.getY(), gate.overworldPos.getZ(),
-                gate.mobs.size(),
-                gate.completed ? "TERMINE" : gate.failed ? "ECHOUE" : "EN COURS",
-                gate.bossGate ? " [BOSS]" : "");
-            source.sendSuccess(() -> Component.literal(info).withStyle(gate.rank.color()), false);
+            Component statusComp = gate.completed
+                ? Component.translatable("sologates.command.status.done").withStyle(ChatFormatting.GREEN)
+                : gate.failed
+                    ? Component.translatable("sologates.command.status.failed").withStyle(ChatFormatting.RED)
+                    : Component.translatable("sologates.command.status.active").withStyle(ChatFormatting.YELLOW);
+            Component bossComp = gate.bossGate
+                ? Component.literal(" [BOSS]").withStyle(ChatFormatting.GOLD)
+                : Component.empty();
+            Component entry = Component.translatable("sologates.command.gate_entry",
+                Component.literal(gate.rank.name()).withStyle(gate.rank.color()),
+                Component.literal(String.valueOf(gate.overworldPos.getX())),
+                Component.literal(String.valueOf(gate.overworldPos.getY())),
+                Component.literal(String.valueOf(gate.overworldPos.getZ())),
+                Component.literal(String.valueOf(gate.mobs.size())),
+                statusComp, bossComp);
+            source.sendSuccess(() -> entry, false);
         }
         return 1;
     }
@@ -98,7 +109,7 @@ public final class SoloGatesCommands {
         if (targetName != null) {
             target = source.getServer().getPlayerList().getPlayerByName(targetName);
             if (target == null) {
-                source.sendFailure(Component.literal("Joueur '" + targetName + "' introuvable."));
+                source.sendFailure(Component.translatable("sologates.command.player_not_found", targetName));
                 return 0;
             }
         } else {
