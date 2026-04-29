@@ -73,4 +73,15 @@ public enum GateRank {
             case S -> SoloGatesConfig.MOB_HP_MULT_S.get();
         };
     }
+
+    /** RGB color for the portal renderer (0.0-1.0 each channel). */
+    public float[] renderColor() {
+        return switch (this) {
+            case E -> new float[]{0.55f, 0.55f, 0.55f};
+            case C -> new float[]{0.0f, 0.9f, 0.2f};
+            case B -> new float[]{0.1f, 0.4f, 1.0f};
+            case A -> new float[]{1.0f, 0.5f, 0.0f};
+            case S -> new float[]{1.0f, 0.05f, 0.05f};
+        };
+    }
 }

@@ -8,12 +8,16 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class GateBlock extends Block {
+import javax.annotation.Nullable;
+
+public class GateBlock extends BaseEntityBlock {
     private final GateRank rank;
 
     public GateBlock(GateRank rank, BlockBehaviour.Properties properties) {
@@ -22,6 +26,17 @@ public class GateBlock extends Block {
     }
 
     public GateRank getRank() { return rank; }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new GateBlockEntity(pos, state);
+    }
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,

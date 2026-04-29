@@ -21,7 +21,9 @@
       "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2`\" /b\")",
       "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\gradle\\\\wrapper`\" /b\")",
       "PowerShell($env:JAVA_HOME = \"C:\\\\Users\\\\matis\\\\.vscode\\\\extensions\\\\redhat.java-1.54.0-win32-x64\\\\jre\\\\21.0.10-win32-x86_64\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; Invoke-WebRequest -Uri \"https://raw.githubusercontent.com/gradle/gradle/v8.8.0/gradle/wrapper/gradle-wrapper.jar\" -OutFile \"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\gradle\\\\wrapper\\\\gradle-wrapper.jar\"; Write-Host \"Telechargement termine\")",
-      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\build\\\\libs`\" /b\")"
+      "PowerShell(cmd /c \"dir `\"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\build\\\\libs`\" /b\")",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\build\\\\libs\\\\sologates-0.2.0.jar\" \"C:\\\\Users\\\\matis\\\\curseforge\\\\minecraft\\\\Instances\\\\level\\\\mods\\\\sologates-0.2.0.jar\")",
+      "PowerShell(\\(Get-Item \"c:\\\\Users\\\\matis\\\\Documents\\\\GitHub\\\\-Dungeon-Arise-\\\\dev\\\\solo-gates-v2\\\\src\\\\main\\\\resources\\\\assets\\\\sologates\\\\textures\\\\block\\\\gate_vortex.png\"\\).Length)"
     ]
   }
 }

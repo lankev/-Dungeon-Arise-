@@ -1,5 +1,1 @@
-{
-  "variants": {
-    "": { "model": "sologates:block/gate_a" }
-  }
-}
+﻿{"variants":{"":{"model":"minecraft:builtin/entity"}}}

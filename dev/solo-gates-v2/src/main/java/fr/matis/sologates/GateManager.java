@@ -1,6 +1,7 @@
 package fr.matis.sologates;
 
 import com.mojang.logging.LogUtils;
+import fr.matis.sologates.entity.GateEntity;
 import fr.matis.sologates.registry.ModBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -306,15 +307,9 @@ public final class GateManager {
 
     public static boolean shouldCancelBreak(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel serverLevel)) return false;
+        if (!serverLevel.dimension().equals(DUNGEON_LEVEL)) return false;
         GateSavedData data = GateSavedData.get(serverLevel.getServer());
-        if (serverLevel.dimension().equals(DUNGEON_LEVEL)) {
-            return data.gates().stream().anyMatch(g -> g.dungeonPos.distSqr(pos) <= 9216.0);
-        }
-        if (serverLevel.dimension().equals(Level.OVERWORLD)) {
-            return data.gates().stream().anyMatch(g ->
-                g.overworldPos.distSqr(pos) <= 196.0 && isPortalStructureBlock(serverLevel.getBlockState(pos).getBlock()));
-        }
-        return false;
+        return data.gates().stream().anyMatch(g -> g.dungeonPos.distSqr(pos) <= 9216.0);
     }
 
     // -------------------------------------------------------------------------
@@ -420,103 +415,13 @@ public final class GateManager {
     // -------------------------------------------------------------------------
 
     private static void placeGate(ServerLevel level, BlockPos base, GateRank rank) {
-        for (int x = -5; x <= 5; x++) {
-            for (int y = 0; y <= 10; y++) {
-                BlockPos pos = base.offset(x, y, 0);
-                int absX = Math.abs(x);
-                boolean portal    = absX <= 1 && y >= 1 && y <= 6;
-                boolean innerFrame= absX == 2 && y >= 0 && y <= 7 || absX <= 2 && (y == 0 || y == 7);
-                boolean outerPillar = absX == 3 && y >= 0 && y <= 8;
-                boolean crown     = absX <= 1 && y >= 8 && y <= 10 || absX == 2 && y == 9 || absX == 3 && y == 8;
-                boolean sideSpike = absX == 4 && y >= 2 && y <= 8 && y % 2 == 0
-                                 || absX == 5 && y >= 4 && y <= 7 && y % 2 == 1;
-                if      (portal)             level.setBlockAndUpdate(pos, ModBlocks.gateBlock(rank).defaultBlockState());
-                else if (innerFrame)         level.setBlockAndUpdate(pos, frameBlock(rank));
-                else if (outerPillar||crown) level.setBlockAndUpdate(pos, Blocks.POLISHED_BLACKSTONE.defaultBlockState());
-                else if (sideSpike)          level.setBlockAndUpdate(pos, accentBlock(rank));
-            }
-        }
-        placePortalDetails(level, base, rank);
-    }
-
-    private static void placePortalDetails(ServerLevel level, BlockPos base, GateRank rank) {
-        for (int y = 2; y <= 6; y += 2) {
-            level.setBlockAndUpdate(base.offset(-2, y, 1), accentBlock(rank));
-            level.setBlockAndUpdate(base.offset( 2, y, 1), accentBlock(rank));
-        }
-        level.setBlockAndUpdate(base.offset(0, 9, 1), accentBlock(rank));
-        level.setBlockAndUpdate(base.offset(0, 8, 1), accentBlock(rank));
-        for (int y = 3; y <= 7; y++) {
-            level.setBlockAndUpdate(base.offset(-4, y, 0), Blocks.CHAIN.defaultBlockState());
-            level.setBlockAndUpdate(base.offset( 4, y, 0), Blocks.CHAIN.defaultBlockState());
-        }
-        for (int x = -3; x <= 3; x++) {
-            for (int z = 1; z <= 3; z++) {
-                boolean accent = (Math.abs(x) + z) % 3 == 0;
-                level.setBlockAndUpdate(base.offset(x, 0, z), accent ? accentBlock(rank) : Blocks.DEEPSLATE_TILES.defaultBlockState());
-            }
-        }
-        for (int side : new int[]{-4, 4}) {
-            level.setBlockAndUpdate(base.offset(side, 0, 1), Blocks.POLISHED_BLACKSTONE.defaultBlockState());
-            level.setBlockAndUpdate(base.offset(side, 1, 1), Blocks.POLISHED_BLACKSTONE.defaultBlockState());
-            level.setBlockAndUpdate(base.offset(side, 2, 1), fireBlock(rank));
-            level.setBlockAndUpdate(base.offset(side, 0, 2), Blocks.POLISHED_BLACKSTONE.defaultBlockState());
-        }
-    }
-
-    private static BlockState frameBlock(GateRank rank) {
-        return switch (rank) {
-            case E, C -> Blocks.COBBLESTONE.defaultBlockState();
-            case B, A -> Blocks.POLISHED_BLACKSTONE.defaultBlockState();
-            case S    -> Blocks.GILDED_BLACKSTONE.defaultBlockState();
-        };
-    }
-
-    private static BlockState accentBlock(GateRank rank) {
-        return switch (rank) {
-            case E -> Blocks.MOSSY_COBBLESTONE.defaultBlockState();
-            case C -> Blocks.MOSSY_STONE_BRICKS.defaultBlockState();
-            case B -> Blocks.AMETHYST_BLOCK.defaultBlockState();
-            case A -> Blocks.PURPUR_BLOCK.defaultBlockState();
-            case S -> Blocks.NETHER_WART_BLOCK.defaultBlockState();
-        };
-    }
-
-    private static BlockState fireBlock(GateRank rank) {
-        return switch (rank) {
-            case E, C -> Blocks.FIRE.defaultBlockState();
-            case B, A -> Blocks.AMETHYST_BLOCK.defaultBlockState();
-            case S    -> Blocks.SOUL_FIRE.defaultBlockState();
-        };
+        GateEntity gateEntity = GateEntity.create(level, rank, base.offset(0, 1, 0));
+        level.addFreshEntity(gateEntity);
     }
 
     private static void removeGateBlocks(ServerLevel level, BlockPos base) {
-        for (int x = -6; x <= 6; x++) {
-            for (int y = 0; y <= 10; y++) {
-                for (int z = 0; z <= 3; z++) {
-                    BlockPos pos = base.offset(x, y, z);
-                    if (isPortalStructureBlock(level.getBlockState(pos).getBlock())) {
-                        level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean isPortalStructureBlock(Block block) {
-        return isGateBlock(block)
-            || block == Blocks.GILDED_BLACKSTONE || block == Blocks.COBBLESTONE
-            || block == Blocks.POLISHED_BLACKSTONE || block == Blocks.MOSSY_COBBLESTONE
-            || block == Blocks.MOSSY_STONE_BRICKS || block == Blocks.AMETHYST_BLOCK
-            || block == Blocks.PURPUR_BLOCK || block == Blocks.NETHER_WART_BLOCK
-            || block == Blocks.DEEPSLATE_TILES || block == Blocks.CHAIN
-            || block == Blocks.SOUL_FIRE || block == Blocks.FIRE;
-    }
-
-    private static boolean isGateBlock(Block block) {
-        return block == ModBlocks.GATE_E.get() || block == ModBlocks.GATE_C.get()
-            || block == ModBlocks.GATE_B.get() || block == ModBlocks.GATE_A.get()
-            || block == ModBlocks.GATE_S.get();
+        level.getEntitiesOfClass(GateEntity.class, new AABB(base).inflate(6, 10, 6))
+             .forEach(Entity::discard);
     }
 
     // -------------------------------------------------------------------------
