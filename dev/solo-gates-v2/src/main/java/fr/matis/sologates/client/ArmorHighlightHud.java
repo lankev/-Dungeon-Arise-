@@ -29,29 +29,25 @@ public class ArmorHighlightHud {
         if (player == null || player.isCreative() || player.isSpectator()) return;
         if (!hasBetterModArmorInInventory(player)) return;
 
-        // Pulsing alpha: oscillates between 30 and 110
         float pulse = (float)(Math.sin(System.currentTimeMillis() / 350.0) * 0.5 + 0.5);
         int alpha = (int)(30 + pulse * 80);
 
         int sw = event.getWindow().getGuiScaledWidth();
         int sh = event.getWindow().getGuiScaledHeight();
-        // Armor bar position (vanilla): bottom-left of the 10-icon row
         int x = sw / 2 - 91;
         int y = sh - 49;
 
         GuiGraphics g = event.getGuiGraphics();
-        // Semi-transparent red fill
         g.fill(x - 1, y - 1, x + 82, y + 10, (alpha << 24) | 0xFF2200);
-        // Solid red border (1px)
         int border = Math.min(alpha + 60, 200);
-        g.fill(x - 1, y - 1, x + 82, y,      (border << 24) | 0xFF2200); // top
-        g.fill(x - 1, y + 9, x + 82, y + 10, (border << 24) | 0xFF2200); // bottom
-        g.fill(x - 1, y - 1, x,      y + 10, (border << 24) | 0xFF2200); // left
-        g.fill(x + 81, y - 1, x + 82, y + 10, (border << 24) | 0xFF2200); // right
+        g.fill(x - 1, y - 1, x + 82, y,       (border << 24) | 0xFF2200);
+        g.fill(x - 1, y + 9, x + 82, y + 10,  (border << 24) | 0xFF2200);
+        g.fill(x - 1, y - 1, x,      y + 10,  (border << 24) | 0xFF2200);
+        g.fill(x + 81, y - 1, x + 82, y + 10, (border << 24) | 0xFF2200);
     }
 
     private static boolean hasBetterModArmorInInventory(Player player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+        for (int i = 0; i < 36; i++) {
             ItemStack stack = player.getInventory().getItem(i);
             if (!(stack.getItem() instanceof ArmorItem armorItem)) continue;
 

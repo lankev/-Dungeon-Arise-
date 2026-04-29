@@ -52,12 +52,9 @@ public class GateEntityRenderer<T extends GateEntity> extends EntityRenderer<T> 
         float time = gameTime + partialTick;
 
         poseStack.pushPose();
-        // Center vertically in the 3-block-tall bounding box
         poseStack.translate(0, 1.5, 0);
-        // Billboard: always face camera
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         poseStack.mulPose(camera.rotation());
-        // Scale to 3x3
         poseStack.scale(3.0f, 3.0f, 3.0f);
 
         VertexConsumer vc = bufferSource.getBuffer(RENDER_TYPE);

@@ -25,6 +25,8 @@ public class GateEntity extends Entity {
     private static final EntityDataAccessor<String> DATA_RANK =
         SynchedEntityData.defineId(GateEntity.class, EntityDataSerializers.STRING);
 
+    private DustParticleOptions cachedDust;
+
     public GateEntity(EntityType<? extends GateEntity> type, Level level) {
         super(type, level);
         this.noPhysics = true;
@@ -51,12 +53,14 @@ public class GateEntity extends Entity {
     public void tick() {
         super.tick();
         if (!(level() instanceof ServerLevel serverLevel)) return;
-        float[] c = getRank().renderColor();
-        DustParticleOptions dust = new DustParticleOptions(new Vector3f(c[0], c[1], c[2]), 1.2f);
+        if (cachedDust == null) {
+            float[] c = getRank().renderColor();
+            cachedDust = new DustParticleOptions(new Vector3f(c[0], c[1], c[2]), 1.2f);
+        }
         for (int i = 0; i < 6; i++) {
             double angle = random.nextDouble() * Math.PI * 2;
             double radius = 1.0 + random.nextDouble() * 0.6;
-            serverLevel.sendParticles(dust,
+            serverLevel.sendParticles(cachedDust,
                 getX() + Math.cos(angle) * radius,
                 getY() + random.nextDouble() * 3.0,
                 getZ() + Math.sin(angle) * radius,
@@ -72,8 +76,10 @@ public class GateEntity extends Entity {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         if (tag.contains("Rank")) {
-            try { entityData.set(DATA_RANK, GateRank.valueOf(tag.getString("Rank")).name()); }
-            catch (IllegalArgumentException ignored) {}
+            try {
+                entityData.set(DATA_RANK, GateRank.valueOf(tag.getString("Rank")).name());
+                cachedDust = null;
+            } catch (IllegalArgumentException ignored) {}
         }
     }
 

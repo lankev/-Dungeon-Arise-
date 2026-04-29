@@ -1,0 +1,61 @@
+CHAPITRE FARMER'S DELIGHT — QUÊTES + RÉCOMPENSES
+
+========================
+NIVEAU 1 — DÉCOUVERTE
+========================
+1. Obtenir 4 cabbage -> récompense: cabbage_seeds x4
+2. Obtenir 4 tomato -> récompense: tomato_seeds x4
+3. Crafter cutting_board -> récompense: straw x16
+4. Crafter knife -> récompense: canvas x4
+5. Obtenir 4 onion -> récompense: onion_seeds x4
+6. Obtenir 4 rice -> récompense: rice x8
+7. Obtenir 8 wheat -> récompense: bread x8
+8. Obtenir 8 carrot -> récompense: potato x8
+
+========================
+NIVEAU 2 — PREMIÈRE CUISINE
+========================
+1. Crafter cooking_pot -> récompense: cooking_pot x1
+2. Crafter 8 bowls -> récompense: cabbage x8
+3. Faire 2 vegetable_soup -> récompense: tomato x8
+4. Faire 2 beef_stew -> récompense: raw_beef x8
+5. Obtenir 8 cabbage_leaf -> récompense: cabbage_seeds x6
+6. Obtenir 8 tomato -> récompense: onion x6
+7. Obtenir 8 rice -> récompense: wheat x12
+8. Obtenir 8 onion -> récompense: carrot x8
+
+========================
+NIVEAU 3 — CUISINE AVANCÉE
+========================
+1. Crafter sandwich -> récompense: bread x16
+2. Faire 2 meals -> récompense: golden_carrot x4
+3. Obtenir 4 plats différents -> récompense: rice x12
+4. Faire 4 plats -> récompense: cooking_pot x1
+5. Obtenir 16 nourriture FD -> récompense: canvas x8
+6. Obtenir 16 cabbage -> récompense: cabbage_seeds x8
+7. Obtenir 16 tomato -> récompense: tomato_seeds x8
+8. Obtenir 16 onion -> récompense: onion_seeds x8
+
+========================
+NIVEAU 4 — CUISINIER EXPERT
+========================
+1. Faire 4 plats différents -> récompense: tomato_seeds x8
+2. Obtenir 16 repas -> récompense: golden_apple x1
+3. Crafter 2 cooking_pot -> récompense: iron_ingot x8
+4. Obtenir 10 ingrédients différents -> récompense: rice x16
+5. Produire 32 nourriture -> récompense: honey_bottle x4
+6. Obtenir 32 cabbage -> récompense: cabbage_seeds x12
+7. Obtenir 32 tomato -> récompense: tomato_seeds x12
+8. Obtenir 32 onion -> récompense: onion_seeds x12
+
+========================
+NIVEAU 5 — MAÎTRE CUISINIER
+========================
+1. Faire 6 plats FD -> récompense: golden_carrot x8
+2. Obtenir 32 repas -> récompense: golden_apple x2
+3. Farmer cabbage x32 -> récompense: seeds pack (cabbage + tomato + onion)
+4. Farmer tomato x32 -> récompense: seeds pack x2
+5. Crafter 16 bowls + meals -> récompense: cooking_pot x1
+6. Produire 64 nourriture -> récompense: honey_bottle x8
+7. Obtenir 16 repas avancés -> récompense: golden_carrot x12
+8. Obtenir 64 ingrédients FD -> récompense: crate food (custom conseillé)

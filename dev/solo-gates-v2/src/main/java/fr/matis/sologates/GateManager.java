@@ -1,6 +1,5 @@
 package fr.matis.sologates;
 
-import com.mojang.logging.LogUtils;
 import fr.matis.sologates.entity.GateEntity;
 import fr.matis.sologates.registry.ModBlocks;
 import net.minecraft.ChatFormatting;
@@ -10,7 +9,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import org.slf4j.Logger;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -26,7 +24,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -41,7 +38,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.*;
 
 public final class GateManager {
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ResourceKey<Level> DUNGEON_LEVEL = ResourceKey.create(
         Registries.DIMENSION, new ResourceLocation("sologates", "dungeon"));
@@ -342,7 +338,8 @@ public final class GateManager {
             Component msg = bossGate
                 ? Component.translatable("sologates.message.boss_gate_appeared").withStyle(ChatFormatting.RED)
                 : Component.translatable("sologates.message.gate_appeared", rank.displayName());
-            player.displayClientMessage(msg, false);
+            overworld.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(128, 64, 128))
+                .forEach(nearby -> nearby.displayClientMessage(msg, false));
             return Optional.of(rank);
         }
         return Optional.empty();
