@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Specification-Title: solo-gates
-Specification-Vendor: matis
-Specification-Version: 1
-Implementation-Title: solo-gates
-Implementation-Version: 0.1.0
-Implementation-Vendor: matis
-

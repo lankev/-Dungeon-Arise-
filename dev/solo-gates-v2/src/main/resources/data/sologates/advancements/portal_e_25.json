@@ -1,0 +1,18 @@
+{
+  "parent": "sologates:gate_e",
+  "display": {
+    "icon": {"item": "sologates:gate_e"},
+    "title": {"translate": "advancement.sologates.portal_e_25.title"},
+    "description": {"translate": "advancement.sologates.portal_e_25.desc"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "complete": {
+      "trigger": "sologates:gate_complete",
+      "conditions": {"rank": "E", "count": 25}
+    }
+  }
+}

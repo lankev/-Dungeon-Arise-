@@ -1032,7 +1032,7 @@ public final class GateManager {
                     new AABB(gate.dungeonPos).inflate(64, 16, 64))) {
                 PlayerData pd = psd.getOrCreate(p.getUUID());
                 pd.recordCompletion(gate.rank);
-                SoloGatesCriteria.GATE_COMPLETE.trigger(p, gate.rank, gate.bossGate);
+                SoloGatesCriteria.GATE_COMPLETE.trigger(p, gate.rank, gate.bossGate, pd.completions(gate.rank));
                 SoloGatesCriteria.GATE_MILESTONE.trigger(p, pd.totalCompletions());
             }
             psd.markDirty();

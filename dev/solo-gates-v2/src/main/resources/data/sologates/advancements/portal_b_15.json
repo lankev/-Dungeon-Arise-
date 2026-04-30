@@ -1,0 +1,18 @@
+{
+  "parent": "sologates:gate_b",
+  "display": {
+    "icon": {"item": "sologates:gate_b"},
+    "title": {"translate": "advancement.sologates.portal_b_15.title"},
+    "description": {"translate": "advancement.sologates.portal_b_15.desc"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "complete": {
+      "trigger": "sologates:gate_complete",
+      "conditions": {"rank": "B", "count": 15}
+    }
+  }
+}

@@ -35,7 +35,11 @@ public class ArmorHighlightHud {
         int sw = event.getWindow().getGuiScaledWidth();
         int sh = event.getWindow().getGuiScaledHeight();
         int x = sw / 2 - 91;
-        int y = sh - 49;
+
+        // Armor bar moves up when there are extra health rows (maxHealth > 20)
+        int totalHP = (int) Math.ceil(player.getMaxHealth() + player.getAbsorptionAmount());
+        int healthRows = Math.max(1, (int) Math.ceil(totalHP / 20.0));
+        int y = sh - 49 - (healthRows - 1) * 10;
 
         GuiGraphics g = event.getGuiGraphics();
         g.fill(x - 1, y - 1, x + 82, y + 10, (alpha << 24) | 0xFF2200);
