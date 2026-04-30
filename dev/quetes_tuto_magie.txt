@@ -1,0 +1,41 @@
+CHAPITRE MAGIE — TUTORIEL (IRON'S SPELLBOOK)
+
+========================
+PHASE 1 — DÉCOUVERTE
+========================
+1. Obtenir un spellbook -> récompense: novice_spell_book
+2. Posséder un spellbook -> récompense: xp_bottle x8
+3. Obtenir un scroll -> récompense: scroll random
+4. Apprendre un sort -> récompense: mana_potion x2
+
+========================
+PHASE 2 — PREMIERS SORTS
+========================
+5. Utiliser un sort 5 fois -> récompense: xp_bottle x16
+6. Tuer 5 mobs avec magie -> récompense: mana_crystal x2
+7. Utiliser 2 sorts différents -> récompense: scroll random
+8. Obtenir 3 scrolls -> récompense: scroll rare
+
+========================
+PHASE 3 — AMÉLIORATION
+========================
+9. Posséder 3 sorts différents -> récompense: mana_potion x3
+10. Obtenir un spellbook amélioré -> récompense: spellbook upgrade
+11. Tuer 10 mobs avec magie -> récompense: mana_crystal x4
+12. Obtenir 5 scrolls -> récompense: scroll pack
+
+========================
+PHASE 4 — COMBAT MAGIQUE
+========================
+13. Tuer 5 creepers avec magie -> récompense: mana_potion x4
+14. Tuer 5 skeletons avec magie -> récompense: xp_bottle x32
+15. Tuer 10 mobs avec un sort à distance -> récompense: scroll random
+16. Tuer 10 mobs avec un sort de zone -> récompense: scroll rare
+
+========================
+PHASE 5 — MAÎTRISE
+========================
+17. Posséder 5 sorts différents -> récompense: mana_crystal x6
+18. Utiliser 3 types de sorts -> récompense: spell rare
+19. Tuer 15 mobs avec magie -> récompense: mana_potion x6
+20. Tuer 20 mobs uniquement avec magie -> récompense: spellbook avancé

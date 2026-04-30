@@ -27,7 +27,7 @@ public class ArmorHighlightHud {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null || player.isCreative() || player.isSpectator()) return;
-        if (!hasBetterModArmorInInventory(player)) return;
+        if (!hasBetterModArmorInInventory(player) && !isEquippedArmorAboveBase(player)) return;
 
         float pulse = (float)(Math.sin(System.currentTimeMillis() / 350.0) * 0.5 + 0.5);
         int alpha = (int)(30 + pulse * 80);
@@ -44,6 +44,20 @@ public class ArmorHighlightHud {
         g.fill(x - 1, y + 9, x + 82, y + 10,  (border << 24) | 0xFF2200);
         g.fill(x - 1, y - 1, x,      y + 10,  (border << 24) | 0xFF2200);
         g.fill(x + 81, y - 1, x + 82, y + 10, (border << 24) | 0xFF2200);
+    }
+
+    private static final int[] VANILLA_MAX_DEFENSE = {3, 8, 6, 3}; // HEAD, CHEST, LEGS, FEET
+    private static final EquipmentSlot[] ARMOR_SLOTS = {
+        EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
+    };
+
+    private static boolean isEquippedArmorAboveBase(Player player) {
+        for (int i = 0; i < ARMOR_SLOTS.length; i++) {
+            ItemStack equipped = player.getItemBySlot(ARMOR_SLOTS[i]);
+            if (equipped.getItem() instanceof ArmorItem a && a.getDefense() > VANILLA_MAX_DEFENSE[i])
+                return true;
+        }
+        return false;
     }
 
     private static boolean hasBetterModArmorInInventory(Player player) {
