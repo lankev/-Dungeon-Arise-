@@ -9,6 +9,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -32,7 +33,13 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import fr.matis.sologates.network.SoloGatesNetwork;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
@@ -62,7 +69,7 @@ public final class GateManager {
                 boolean hasPlayers = dungeon != null &&
                     !dungeon.getEntitiesOfClass(ServerPlayer.class,
                         new AABB(gate.dungeonPos).inflate(64, 16, 64)).isEmpty();
-                if (!hasPlayers && overworld.getGameTime() - gate.createdTick > completedLifetime) {
+                if (!hasPlayers && gameTime - gate.createdTick > completedLifetime) {
                     removeGateBlocks(overworld, gate.overworldPos);
                     if (dungeon != null) clearDungeonSpace(dungeon, gate.dungeonPos);
                     toRemove.add(gate.id);
@@ -70,13 +77,40 @@ public final class GateManager {
                 continue;
             }
 
+            // Gate not yet entered: expire after base lifetime
+            if (!gate.entryStarted) {
+                long lifetime = Math.min(SoloGatesConfig.GATE_LIFETIME_SECONDS.get(), 300) * 20L;
+                if (gameTime - gate.createdTick > lifetime) {
+                    expireGate(overworld, gate);
+                    toRemove.add(gate.id);
+                }
+                continue;
+            }
+
+            // Entry window still open: warn nearby players who haven't joined yet
+            if (gate.entryWindowEndTick > 0) {
+                long remaining = gate.entryWindowEndTick - gameTime;
+                if ((remaining <= 600 && remaining > 500) || (remaining <= 200 && remaining > 100)) {
+                    int secsLeft = (int)(remaining / 20);
+                    Component warn = Component.translatable("sologates.message.gate_closing_warning",
+                        gate.rank.displayName(), secsLeft).withStyle(
+                            remaining <= 200 ? ChatFormatting.RED : ChatFormatting.YELLOW);
+                    overworld.getEntitiesOfClass(ServerPlayer.class,
+                        new AABB(gate.overworldPos).inflate(128, 64, 128))
+                        .stream().filter(p -> !gate.activeParticipants.contains(p.getUUID()))
+                        .forEach(p -> p.displayClientMessage(warn, false));
+                }
+            }
+
+            // Gate running: check mobs and scaled lifetime
             if (gate.mobs.isEmpty()) {
                 completeGate(overworld, gate);
                 continue;
             }
 
-            long lifetime = Math.min(SoloGatesConfig.GATE_LIFETIME_SECONDS.get(), 300) * 20L;
-            if (gameTime - gate.createdTick > lifetime) {
+            long scaledLifetime = getScaledLifetime(gate);
+            long startRef = gate.dungeonStartTick > 0 ? gate.dungeonStartTick : gate.createdTick;
+            if (gameTime - startRef > scaledLifetime) {
                 expireGate(overworld, gate);
                 toRemove.add(gate.id);
             }
@@ -150,31 +184,86 @@ public final class GateManager {
             player.displayClientMessage(Component.translatable("sologates.message.gate_not_stabilized"), true);
             return;
         }
-        ServerLevel dungeon = overworld.getServer().getLevel(DUNGEON_LEVEL);
-        if (dungeon == null) {
-            player.displayClientMessage(Component.translatable("sologates.message.dimension_not_loaded"), false);
+
+        GateRecord record = gateOpt.get();
+
+        if (record.completed || record.failed) return;
+
+        // Rang requis : rang confirmé du joueur doit être >= rang de la gate
+        PlayerSavedData psdCheck = PlayerSavedData.get(overworld.getServer());
+        PlayerData pdCheck = psdCheck.getOrCreate(player.getUUID());
+        if (pdCheck.confirmedRank().ordinal() < record.rank.ordinal()) {
+            player.displayClientMessage(Component.translatable("sologates.message.rank_required",
+                record.rank.displayName()).withStyle(ChatFormatting.RED), true);
             return;
         }
-        GateRecord record = gateOpt.get();
-        record.setReturnPosition(player.getUUID(), player.blockPosition());
-        data.setDirty();
 
+        // Already inside
+        if (record.activeParticipants.contains(player.getUUID())) return;
+
+        // Entry window closed (gate started but join period over)
+        if (record.entryStarted && overworld.getGameTime() >= record.entryWindowEndTick) {
+            player.displayClientMessage(Component.translatable("sologates.message.gate_already_started"), true);
+            return;
+        }
+
+        ServerLevel dungeon = overworld.getServer().getLevel(DUNGEON_LEVEL);
+        if (dungeon == null) {
+            player.displayClientMessage(Component.translatable("sologates.message.dimension_not_loaded"), true);
+            return;
+        }
+
+        record.setReturnPosition(player.getUUID(), player.blockPosition());
+        record.activeParticipants.add(player.getUUID());
+        record.playerCount = record.activeParticipants.size();
+
+        if (!record.entryStarted) {
+            // First player: build dungeon immediately and open join window
+            record.entryStarted = true;
+            record.entryWindowEndTick = overworld.getGameTime() + 3600L; // 180s
+            record.dungeonStartTick = overworld.getGameTime();
+            data.setDirty();
+
+            buildDungeon(dungeon, record);
+
+            // Broadcast to nearby players (excluding the opener)
+            Component openMsg = Component.translatable("sologates.message.gate_entry_open",
+                player.getName(), record.rank.displayName(), 180).withStyle(ChatFormatting.GOLD);
+            overworld.getEntitiesOfClass(ServerPlayer.class, new AABB(record.overworldPos).inflate(128, 64, 128))
+                .stream().filter(p -> !p.getUUID().equals(player.getUUID()))
+                .forEach(p -> p.displayClientMessage(openMsg, false));
+        } else {
+            // Additional player joining during window
+            long secsLeft = (record.entryWindowEndTick - overworld.getGameTime()) / 20;
+            Component joinMsg = Component.translatable("sologates.message.gate_player_joined",
+                player.getName(), record.activeParticipants.size()).withStyle(ChatFormatting.GREEN);
+            dungeon.getEntitiesOfClass(ServerPlayer.class, new AABB(record.dungeonPos).inflate(64, 16, 64))
+                .forEach(p -> p.displayClientMessage(joinMsg, false));
+            // Spawn extra mobs for the new player
+            spawnExtraMobsForNewPlayer(dungeon, record);
+            data.setDirty();
+        }
+
+        // Teleport immediately into dungeon
         player.teleportTo(dungeon,
             record.dungeonPos.getX() + 0.5,
             record.dungeonPos.getY() + 0.15,
             record.dungeonPos.getZ() + 0.5,
             player.getYRot(), player.getXRot());
 
-        // Announce dungeon info
+        // Info message for the entering player
         int mobs = record.mobs.size();
-        long timeLeft = Math.min(SoloGatesConfig.GATE_LIFETIME_SECONDS.get(), 300) * 20L
-            - (overworld.getGameTime() - record.createdTick);
-        long secsLeft = timeLeft / 20;
+        long combatSecs = getScaledLifetime(record) / 20;
         String infoKey = record.bossGate ? "sologates.message.boss_gate_info" : "sologates.message.gate_info";
-        player.displayClientMessage(
-            Component.translatable(infoKey, record.rank.displayName(),
-                Component.literal(String.valueOf(mobs)),
-                Component.literal(String.valueOf(secsLeft))), false);
+        player.displayClientMessage(Component.translatable(infoKey,
+            record.rank.displayName(),
+            Component.literal(String.valueOf(mobs)).withStyle(ChatFormatting.WHITE),
+            Component.literal(String.valueOf(combatSecs)).withStyle(ChatFormatting.WHITE)), false);
+    }
+
+    private static long getScaledLifetime(GateRecord gate) {
+        long base = Math.min(SoloGatesConfig.GATE_LIFETIME_SECONDS.get(), 300) * 20L;
+        return Math.round(base * (1.0 + (gate.playerCount - 1) * 0.4));
     }
 
     public static boolean spawnManualGate(ServerPlayer player, GateRank rank) {
@@ -192,7 +281,6 @@ public final class GateManager {
         BlockPos dungeonPos = nextDungeonPos(data);
         GateRecord gate = new GateRecord(UUID.randomUUID(), rank, pos, dungeonPos, overworld.getGameTime());
         placeGate(overworld, pos, rank);
-        buildDungeon(overworld.getServer().getLevel(DUNGEON_LEVEL), gate);
         data.addGate(gate);
         overworld.playSound(null, pos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 2f, 0.6f);
         player.displayClientMessage(Component.translatable("sologates.message.gate_created", rank.displayName()), false);
@@ -215,7 +303,6 @@ public final class GateManager {
             nextDungeonPos(data), overworld.getGameTime());
         gate.bossGate = true;
         placeGate(overworld, pos, GateRank.S);
-        buildDungeon(overworld.getServer().getLevel(DUNGEON_LEVEL), gate);
         data.addGate(gate);
         overworld.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 0.8f, 1.5f);
         player.displayClientMessage(Component.translatable("sologates.message.boss_gate_created"), false);
@@ -295,10 +382,32 @@ public final class GateManager {
         ServerLevel level = player.serverLevel();
         if (!level.dimension().equals(DUNGEON_LEVEL)) return;
         GateSavedData data = GateSavedData.get(level.getServer());
+        PlayerSavedData psd = PlayerSavedData.get(level.getServer());
+        PlayerData pd = psd.getOrCreate(player.getUUID());
+        if (pd.currentStreak() >= 2) {
+            player.displayClientMessage(Component.translatable("sologates.message.streak_lost",
+                pd.currentStreak()).withStyle(ChatFormatting.RED), false);
+        }
+        pd.resetStreak();
+        SoloGatesNetwork.sendRankToPlayer(player, pd.confirmedRank(), pd.currentStreak());
+        psd.markDirty();
         data.gates().stream()
             .filter(r -> r.dungeonPos.distSqr(player.blockPosition()) < 10000.0)
             .min(Comparator.comparingDouble(r -> r.dungeonPos.distSqr(player.blockPosition())))
-            .ifPresent(gate -> failGate(level, gate));
+            .ifPresent(gate -> {
+                gate.activeParticipants.remove(player.getUUID());
+                data.setDirty();
+                if (gate.activeParticipants.isEmpty()) {
+                    failGate(level, gate);
+                } else {
+                    int remaining = gate.activeParticipants.size();
+                    Component msg = Component.translatable("sologates.message.player_died_gate",
+                        player.getName(), remaining).withStyle(ChatFormatting.RED);
+                    level.getEntitiesOfClass(ServerPlayer.class,
+                        new AABB(gate.dungeonPos).inflate(64, 16, 64))
+                        .forEach(p -> p.displayClientMessage(msg, false));
+                }
+            });
     }
 
     public static boolean shouldCancelBreak(Level level, BlockPos pos) {
@@ -326,12 +435,11 @@ public final class GateManager {
             if (!canPlaceGate(overworld, pos)) continue;
 
             boolean bossGate = random.nextInt(100) < SoloGatesConfig.BOSS_GATE_CHANCE_PERCENT.get();
-            GateRank rank = bossGate ? GateRank.S : randomRank(random);
+            GateRank rank = bossGate ? GateRank.S : randomRankForPlayer(random, player);
             BlockPos dungeonPos = nextDungeonPos(data);
             GateRecord gate = new GateRecord(UUID.randomUUID(), rank, pos, dungeonPos, overworld.getGameTime());
             gate.bossGate = bossGate;
             placeGate(overworld, pos, rank);
-            buildDungeon(overworld.getServer().getLevel(DUNGEON_LEVEL), gate);
             data.addGate(gate);
             overworld.playSound(null, pos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 2f, 0.6f);
 
@@ -407,6 +515,16 @@ public final class GateManager {
         return GateRank.E;
     }
 
+    private static GateRank randomRankForPlayer(RandomSource random, ServerPlayer player) {
+        GateRank rolledRank = randomRank(random);
+        int bonusPercent = SoloGatesConfig.PLAYER_RANK_GATE_BONUS_PERCENT.get();
+        if (bonusPercent <= 0 || random.nextInt(100) >= bonusPercent) return rolledRank;
+
+        PlayerSavedData psd = PlayerSavedData.get(player.server);
+        GateRank playerRank = psd.getOrCreate(player.getUUID()).confirmedRank();
+        return playerRank == GateRank.E ? rolledRank : playerRank;
+    }
+
     // -------------------------------------------------------------------------
     // Gate structure placement
     // -------------------------------------------------------------------------
@@ -463,20 +581,24 @@ public final class GateManager {
             return createShadowRooms(random, gate);
         }
         // S rank — large shadow dungeon
-        int roomCount = 4 + random.nextInt(2);
+        int roomCount = 6 + random.nextInt(4);
         List<DungeonRoom> rooms = new ArrayList<>();
         rooms.add(new DungeonRoom(gate.dungeonPos, 8, 8, RoomType.ENTRANCE));
-        int pattern = random.nextInt(4);
+        int pattern = random.nextInt(7);
+        RoomType[] midTypes = {
+            RoomType.COMBAT, RoomType.CATACOMB, RoomType.CHAINS,
+            RoomType.ALTAR, RoomType.CRYSTAL, RoomType.RITUAL, RoomType.VOID_SHRINE
+        };
         for (int i = 1; i < roomCount; i++) {
             BlockPos rc = patternedRoomCenter(random, gate.dungeonPos, i, pattern);
-            rooms.add(new DungeonRoom(rc, 5 + random.nextInt(3), 5 + random.nextInt(3),
-                i == roomCount - 1 ? RoomType.BOSS : RoomType.COMBAT));
+            RoomType type = i == roomCount - 1 ? RoomType.BOSS : midTypes[i % midTypes.length];
+            rooms.add(new DungeonRoom(rc, 6 + random.nextInt(5), 6 + random.nextInt(5), type));
         }
         return rooms;
     }
 
     private static List<DungeonRoom> createShadowRooms(RandomSource random, GateRecord gate) {
-        int variant = random.nextInt(3);
+        int variant = random.nextInt(12);
         BlockPos o = gate.dungeonPos;
         boolean aRank = gate.rank == GateRank.A;
         List<DungeonRoom> rooms = new ArrayList<>();
@@ -495,38 +617,163 @@ public final class GateManager {
                 rooms.add(new DungeonRoom(o.offset(40, 0, 22), 8, 8, RoomType.CRYSTAL));
                 if (aRank) rooms.add(new DungeonRoom(o.offset(18, 0, 36), 9, 9, RoomType.THRONE));
             }
-            default -> {
+            case 2 -> {
                 rooms.add(new DungeonRoom(o, 7, 9, RoomType.ENTRANCE));
                 rooms.add(new DungeonRoom(o.offset(-20, 0, 18), 8, 8, RoomType.CRYSTAL));
                 rooms.add(new DungeonRoom(o.offset(20, 0, 18), 8, 8, RoomType.CHAINS));
                 rooms.add(new DungeonRoom(o.offset(0, 0, 38), 10, 8, RoomType.RITUAL));
                 if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 60), 9, 9, RoomType.THRONE));
             }
+            case 3 -> { // Hub avec catacombes
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 0), 8, 7, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 0), 7, 8, RoomType.CRYSTAL));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 24), 9, 8, RoomType.CHAINS));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 48), 9, 9, RoomType.ALTAR));
+            }
+            case 4 -> { // T-shape avec autel
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 7, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 22), 8, 7, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 22), 8, 7, RoomType.COMBAT));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 46), 9, 9, RoomType.ALTAR));
+            }
+            case 5 -> { // Zigzag long
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 14), 8, 7, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 32), 8, 8, RoomType.CRYSTAL));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 46), 8, 7, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 64), 9, 9, RoomType.RITUAL));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 88), 9, 9, RoomType.THRONE));
+            }
+            case 6 -> { // Complexe du trône
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 8, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 22), 7, 8, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 22), 8, 9, RoomType.CRYSTAL));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 46), 9, 9, RoomType.RITUAL));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 72), 10, 10, RoomType.THRONE));
+            }
+            case 7 -> { // Grottes de cristaux
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 0), 9, 8, RoomType.CRYSTAL));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 0), 8, 9, RoomType.CRYSTAL));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 8, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 46), 9, 9, RoomType.RITUAL));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 70), 9, 9, RoomType.ALTAR));
+            }
+            case 8 -> { // Couloir de chaînes
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 8, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 22), 8, 9, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 44), 9, 8, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 44), 9, 9, RoomType.RITUAL));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 68), 10, 10, RoomType.THRONE));
+            }
+            case 9 -> { // Sanctuaire du vide
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 8, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(24, 0, 22), 10, 9, RoomType.VOID_SHRINE));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 46), 9, 9, RoomType.ALTAR));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 70), 10, 10, RoomType.THRONE));
+            }
+            case 10 -> { // Complexe d'autel
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(20, 0, 14), 8, 7, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(-20, 0, 14), 8, 7, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 34), 9, 9, RoomType.ALTAR));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 34), 8, 8, RoomType.VOID_SHRINE));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 58), 10, 10, RoomType.THRONE));
+            }
+            default -> { // Progression vers le boss (6-7 salles)
+                rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 8, RoomType.CHAINS));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 22), 8, 9, RoomType.CATACOMB));
+                rooms.add(new DungeonRoom(o.offset(-22, 0, 22), 8, 9, RoomType.CRYSTAL));
+                rooms.add(new DungeonRoom(o.offset(0, 0, 46), 9, 9, RoomType.ALTAR));
+                rooms.add(new DungeonRoom(o.offset(22, 0, 46), 9, 9, RoomType.RITUAL));
+                if (aRank) rooms.add(new DungeonRoom(o.offset(0, 0, 70), 10, 10, RoomType.THRONE));
+            }
         }
         return rooms;
     }
 
     private static List<DungeonRoom> createOverworldRooms(RandomSource random, GateRecord gate) {
-        int variant = random.nextInt(3);
+        int variant = random.nextInt(12);
         BlockPos o = gate.dungeonPos;
         List<DungeonRoom> rooms = new ArrayList<>();
         if (gate.rank == GateRank.E) {
             switch (variant) {
-                case 0 -> {
+                case 0 -> { // Ligne simple
                     rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
                     rooms.add(new DungeonRoom(o.offset(0, 0, 20), 8, 6, RoomType.COMBAT));
                     rooms.add(new DungeonRoom(o.offset(0, 0, 38), 6, 6, RoomType.TREASURE));
                 }
-                case 1 -> {
+                case 1 -> { // Bras latéraux
                     rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
                     rooms.add(new DungeonRoom(o.offset(20, 0, 0), 7, 7, RoomType.COMBAT));
                     rooms.add(new DungeonRoom(o.offset(-20, 0, 0), 6, 8, RoomType.PUZZLE));
                     rooms.add(new DungeonRoom(o.offset(0, 0, 22), 6, 6, RoomType.TREASURE));
                 }
-                default -> {
+                case 2 -> { // Diagonale courte
                     rooms.add(new DungeonRoom(o, 6, 9, RoomType.ENTRANCE));
                     rooms.add(new DungeonRoom(o.offset(18, 0, 16), 8, 6, RoomType.COMBAT));
                     rooms.add(new DungeonRoom(o.offset(-18, 0, 16), 6, 6, RoomType.TREASURE));
+                }
+                case 3 -> { // L-shape avec bibliothèque
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 20), 6, 7, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 40), 8, 6, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 40), 6, 6, RoomType.TREASURE));
+                }
+                case 4 -> { // Croix
+                    rooms.add(new DungeonRoom(o, 6, 6, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 0), 7, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-20, 0, 0), 7, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 20), 6, 6, RoomType.TREASURE));
+                }
+                case 5 -> { // Zigzag
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(18, 0, 14), 8, 6, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-18, 0, 28), 6, 8, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 46), 6, 6, RoomType.TREASURE));
+                }
+                case 6 -> { // Longue ligne avec 5 salles
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 20), 6, 7, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 38), 8, 6, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 38), 6, 6, RoomType.PUZZLE));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 58), 6, 6, RoomType.TREASURE));
+                }
+                case 7 -> { // Anneau partiel avec caserne
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 0), 7, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 20), 6, 7, RoomType.BARRACKS));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 20), 6, 6, RoomType.TREASURE));
+                }
+                case 8 -> { // Double chemin divergent
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(18, 0, 16), 7, 6, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-18, 0, 16), 7, 6, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 34), 6, 6, RoomType.TREASURE));
+                }
+                case 9 -> { // Grandes salles ouvertes
+                    rooms.add(new DungeonRoom(o, 9, 9, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 26), 10, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 52), 8, 8, RoomType.TREASURE));
+                }
+                case 10 -> { // Ramification en Y
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 14), 7, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-20, 0, 14), 7, 7, RoomType.BARRACKS));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 30), 7, 6, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 50), 6, 6, RoomType.TREASURE));
+                }
+                default -> { // Thème prison
+                    rooms.add(new DungeonRoom(o, 7, 7, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 8, 7, RoomType.PRISON));
+                    rooms.add(new DungeonRoom(o.offset(20, 0, 22), 7, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(10, 0, 42), 6, 6, RoomType.TREASURE));
                 }
             }
         } else { // C rank
@@ -544,11 +791,78 @@ public final class GateManager {
                     rooms.add(new DungeonRoom(o.offset(0, 0, 24), 9, 7, RoomType.COMBAT));
                     rooms.add(new DungeonRoom(o.offset(0, 0, 44), 7, 7, RoomType.TREASURE));
                 }
-                default -> {
+                case 2 -> {
                     rooms.add(new DungeonRoom(o, 7, 9, RoomType.ENTRANCE));
                     rooms.add(new DungeonRoom(o.offset(0, 0, 22), 10, 7, RoomType.PUZZLE));
                     rooms.add(new DungeonRoom(o.offset(24, 0, 22), 8, 8, RoomType.COMBAT));
                     rooms.add(new DungeonRoom(o.offset(24, 0, 44), 8, 7, RoomType.TREASURE));
+                }
+                case 3 -> { // Hub central avec forge
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 0), 8, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-22, 0, 0), 7, 7, RoomType.PUZZLE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 7, 8, RoomType.FORGE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 44), 7, 7, RoomType.TREASURE));
+                }
+                case 4 -> { // T-shape avec bibliothèque
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 8, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-22, 0, 22), 7, 8, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 22), 7, 8, RoomType.FORGE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 44), 7, 7, RoomType.TREASURE));
+                }
+                case 5 -> { // Longue chaîne zigzag
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(18, 0, 15), 7, 7, RoomType.FORGE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 32), 8, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-18, 0, 47), 7, 7, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 64), 7, 7, RoomType.TREASURE));
+                }
+                case 6 -> { // Prison + alchimie
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 0), 8, 7, RoomType.PRISON));
+                    rooms.add(new DungeonRoom(o.offset(-22, 0, 0), 7, 8, RoomType.ALCHEMY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 24), 8, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 24), 7, 7, RoomType.FORGE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 46), 7, 7, RoomType.TREASURE));
+                }
+                case 7 -> { // Labo d'alchimie
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 7, 8, RoomType.ALCHEMY));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 22), 8, 7, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 44), 8, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-22, 0, 44), 7, 7, RoomType.PRISON));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 66), 7, 7, RoomType.TREASURE));
+                }
+                case 8 -> { // Grand couloir ouvert
+                    rooms.add(new DungeonRoom(o, 9, 9, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 26), 10, 9, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(26, 0, 26), 9, 8, RoomType.FORGE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 52), 8, 8, RoomType.TREASURE));
+                }
+                case 9 -> { // Croix avec 6 branches
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 0), 7, 7, RoomType.BARRACKS));
+                    rooms.add(new DungeonRoom(o.offset(-22, 0, 0), 7, 7, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 8, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(22, 0, 22), 7, 7, RoomType.ALCHEMY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 44), 7, 7, RoomType.TREASURE));
+                }
+                case 10 -> { // Aile de dragon asymétrique
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 7, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(24, 0, 14), 7, 8, RoomType.PRISON));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 44), 8, 8, RoomType.FORGE));
+                    rooms.add(new DungeonRoom(o.offset(-22, 0, 36), 7, 7, RoomType.BARRACKS));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 66), 7, 7, RoomType.TREASURE));
+                }
+                default -> { // Cathédrale (longue ligne avec ailes)
+                    rooms.add(new DungeonRoom(o, 8, 8, RoomType.ENTRANCE));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 22), 9, 7, RoomType.LIBRARY));
+                    rooms.add(new DungeonRoom(o.offset(24, 0, 22), 7, 8, RoomType.BARRACKS));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 44), 8, 8, RoomType.COMBAT));
+                    rooms.add(new DungeonRoom(o.offset(-24, 0, 44), 7, 8, RoomType.ALCHEMY));
+                    rooms.add(new DungeonRoom(o.offset(0, 0, 66), 7, 7, RoomType.TREASURE));
                 }
             }
         }
@@ -558,6 +872,7 @@ public final class GateManager {
     private static BlockPos patternedRoomCenter(RandomSource random, BlockPos origin, int index, int pattern) {
         int distance = 18 + index * 7;
         return switch (pattern) {
+            // Existants
             case 0 -> origin.offset(index % 2 == 0 ? distance : -distance, 0, random.nextInt(15) - 7);
             case 1 -> origin.offset(random.nextInt(15) - 7, 0, index % 2 == 0 ? distance : -distance);
             case 2 -> switch (index % 4) {
@@ -566,7 +881,17 @@ public final class GateManager {
                 case 2 -> origin.offset(-distance, 0, 0);
                 default -> origin.offset(0, 0, -distance);
             };
-            default -> origin.offset(index * 13 - 18, 0, (index % 2 == 0 ? 18 : -18) + random.nextInt(9) - 4);
+            case 3 -> origin.offset(index * 13 - 18, 0, (index % 2 == 0 ? 18 : -18) + random.nextInt(9) - 4);
+            // Nouveaux
+            case 4 -> // Double hélix : zigzag croissant en profondeur
+                origin.offset((index % 2 == 0 ? 1 : -1) * (14 + index * 6), 0, index * 16 - 10);
+            case 5 -> { // Étoile : salles réparties en cercle
+                double angle = index * Math.PI * 2.0 / 5.0;
+                int dist = 20 + index * 8;
+                yield origin.offset((int)(Math.cos(angle) * dist), 0, (int)(Math.sin(angle) * dist));
+            }
+            default -> // Dispersion chaotique vers l'avant
+                origin.offset(random.nextInt(30) - 15, 0, 18 + index * 14 + random.nextInt(10) - 5);
         };
     }
 
@@ -651,11 +976,14 @@ public final class GateManager {
         decorateShadowPillars(dungeon, room, rank);
         switch (room.type()) {
             case ENTRANCE, COMBAT -> decorateShadowCombat(dungeon, room, rank);
-            case CHAINS  -> decorateChainRoom(dungeon, room, rank);
-            case CRYSTAL -> decorateCrystalRoom(dungeon, room, rank);
-            case RITUAL  -> decorateRitualRoom(dungeon, room, rank);
+            case CHAINS    -> decorateChainRoom(dungeon, room, rank);
+            case CRYSTAL   -> decorateCrystalRoom(dungeon, room, rank);
+            case RITUAL    -> decorateRitualRoom(dungeon, room, rank);
             case THRONE, BOSS -> decorateThroneRoom(dungeon, room, rank);
-            default -> decorateShadowCombat(dungeon, room, rank);
+            case CATACOMB    -> decorateCatacombRoom(dungeon, room, rank);
+            case ALTAR       -> decorateAltarRoom(dungeon, room, rank);
+            case VOID_SHRINE -> decorateVoidShrineRoom(dungeon, room, rank);
+            default          -> decorateShadowCombat(dungeon, room, rank);
         }
     }
 
@@ -753,11 +1081,16 @@ public final class GateManager {
         decorateOverworldCorners(dungeon, room, rank);
         decorateOverworldWalls(dungeon, room, rank);
         switch (room.type()) {
-            case ENTRANCE -> decorateEntranceRoom(dungeon, room, rank);
-            case COMBAT   -> decorateCombatRoom(dungeon, room, rank);
-            case TREASURE -> decorateTreasureRoom(dungeon, room, rank);
-            case PUZZLE   -> decoratePuzzleRoom(dungeon, room, rank);
-            default       -> decorateCombatRoom(dungeon, room, rank);
+            case ENTRANCE  -> decorateEntranceRoom(dungeon, room, rank);
+            case COMBAT    -> decorateCombatRoom(dungeon, room, rank);
+            case TREASURE  -> decorateTreasureRoom(dungeon, room, rank);
+            case PUZZLE    -> decoratePuzzleRoom(dungeon, room, rank);
+            case FORGE     -> decorateForgeRoom(dungeon, room, rank);
+            case LIBRARY   -> decorateLibraryRoom(dungeon, room, rank);
+            case BARRACKS  -> decorateBarracksRoom(dungeon, room, rank);
+            case PRISON    -> decoratePrisonRoom(dungeon, room, rank);
+            case ALCHEMY   -> decorateAlchemyRoom(dungeon, room, rank);
+            default        -> decorateCombatRoom(dungeon, room, rank);
         }
     }
 
@@ -845,6 +1178,157 @@ public final class GateManager {
             rank == GateRank.C ? Blocks.FIRE.defaultBlockState() : Blocks.TORCH.defaultBlockState(), 3);
     }
 
+    private static void decorateForgeRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Sol en blackstone au centre
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                dungeon.setBlock(room.center().offset(x, -1, z), Blocks.BLACKSTONE.defaultBlockState(), 3);
+            }
+        }
+        dungeon.setBlock(room.center(), Blocks.ANVIL.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(2, 0, 0), Blocks.STONECUTTER.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(-2, 0, 0), Blocks.GRINDSTONE.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(0, 0, 2), Blocks.BLAST_FURNACE.defaultBlockState(), 3);
+        for (int x : new int[]{-3, 3}) {
+            for (int z : new int[]{-3, 3}) {
+                dungeon.setBlock(room.center().offset(x, 0, z), Blocks.FIRE.defaultBlockState(), 3);
+            }
+        }
+    }
+
+    private static void decorateLibraryRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Rangées de bibliothèques
+        for (int x = -room.halfX() + 2; x <= room.halfX() - 2; x += 3) {
+            for (int y = 0; y <= 1; y++) {
+                dungeon.setBlock(room.center().offset(x, y, -2), Blocks.BOOKSHELF.defaultBlockState(), 3);
+                dungeon.setBlock(room.center().offset(x, y,  2), Blocks.BOOKSHELF.defaultBlockState(), 3);
+            }
+        }
+        dungeon.setBlock(room.center(), Blocks.LECTERN.defaultBlockState(), 3);
+        for (int x : new int[]{-3, 3}) {
+            dungeon.setBlock(room.center().offset(x, 0, 0),
+                rank == GateRank.C ? Blocks.CANDLE.defaultBlockState() : Blocks.TORCH.defaultBlockState(), 3);
+        }
+        dungeon.setBlock(room.center().offset(0, 2, 0), Blocks.LANTERN.defaultBlockState(), 3);
+    }
+
+    private static void decorateCatacombRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Sol en os en damier
+        for (int x = -room.halfX() + 1; x <= room.halfX() - 1; x++) {
+            for (int z = -room.halfZ() + 1; z <= room.halfZ() - 1; z++) {
+                if ((Math.abs(x) + Math.abs(z)) % 3 == 0)
+                    dungeon.setBlock(room.center().offset(x, -1, z), Blocks.BONE_BLOCK.defaultBlockState(), 3);
+            }
+        }
+        // Patches de soul sand + feu de l'âme
+        for (int i = 0; i < 4; i++) {
+            int x = dungeon.random.nextInt(Math.max(1, room.halfX() * 2 - 4)) - room.halfX() + 2;
+            int z = dungeon.random.nextInt(Math.max(1, room.halfZ() * 2 - 4)) - room.halfZ() + 2;
+            dungeon.setBlock(room.center().offset(x, -1, z), Blocks.SOUL_SAND.defaultBlockState(), 3);
+            dungeon.setBlock(room.center().offset(x, 0, z), Blocks.SOUL_FIRE.defaultBlockState(), 3);
+        }
+        // Lanternes en coin
+        for (int x : new int[]{-room.halfX() + 3, room.halfX() - 3}) {
+            for (int z : new int[]{-room.halfZ() + 3, room.halfZ() - 3}) {
+                dungeon.setBlock(room.center().offset(x, 0, z), Blocks.BONE_BLOCK.defaultBlockState(), 3);
+                dungeon.setBlock(room.center().offset(x, 1, z), Blocks.SOUL_LANTERN.defaultBlockState(), 3);
+            }
+        }
+    }
+
+    private static void decorateAltarRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Cercle de crying obsidian au sol
+        for (int x = -4; x <= 4; x++) {
+            for (int z = -4; z <= 4; z++) {
+                int d = x * x + z * z;
+                if (d >= 9 && d <= 18)
+                    dungeon.setBlock(room.center().offset(x, -1, z), Blocks.CRYING_OBSIDIAN.defaultBlockState(), 3);
+            }
+        }
+        // Autel central
+        dungeon.setBlock(room.center().offset(0, 0, 0), Blocks.OBSIDIAN.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(0, 1, 0), Blocks.RESPAWN_ANCHOR.defaultBlockState(), 3);
+        // Quatre piliers d'or avec feu de l'âme
+        for (int x : new int[]{-4, 4}) {
+            for (int z : new int[]{-4, 4}) {
+                dungeon.setBlock(room.center().offset(x, 0, z), Blocks.GOLD_BLOCK.defaultBlockState(), 3);
+                dungeon.setBlock(room.center().offset(x, 1, z), Blocks.SOUL_FIRE.defaultBlockState(), 3);
+            }
+        }
+    }
+
+    private static void decorateBarracksRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Lits le long des murs
+        for (int x = -room.halfX() + 2; x <= room.halfX() - 2; x += 3) {
+            dungeon.setBlock(room.center().offset(x, 0, -room.halfZ() + 2), Blocks.RED_BED.defaultBlockState(), 3);
+            dungeon.setBlock(room.center().offset(x, 0,  room.halfZ() - 2), Blocks.RED_BED.defaultBlockState(), 3);
+        }
+        dungeon.setBlock(room.center().offset(0, 0, 0), Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(2, 0, 0), Blocks.CHEST.defaultBlockState(), 3);
+        for (int x : new int[]{-3, 3}) {
+            dungeon.setBlock(room.center().offset(x, 1, 0),
+                rank == GateRank.C ? Blocks.FIRE.defaultBlockState() : Blocks.TORCH.defaultBlockState(), 3);
+        }
+    }
+
+    private static void decoratePrisonRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Rangées de barreaux
+        for (int x = -room.halfX() + 3; x <= room.halfX() - 3; x += 4) {
+            for (int y = 0; y <= 3; y++) {
+                dungeon.setBlock(room.center().offset(x, y, -2), Blocks.IRON_BARS.defaultBlockState(), 3);
+                dungeon.setBlock(room.center().offset(x, y,  2), Blocks.IRON_BARS.defaultBlockState(), 3);
+            }
+        }
+        dungeon.setBlock(room.center().offset(0, 0, 0), Blocks.TRAPPED_CHEST.defaultBlockState(), 3);
+        for (int x : new int[]{-room.halfX() + 2, room.halfX() - 2}) {
+            dungeon.setBlock(room.center().offset(x, 0, 0), Blocks.SOUL_TORCH.defaultBlockState(), 3);
+        }
+    }
+
+    private static void decorateAlchemyRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Stands à potions
+        dungeon.setBlock(room.center().offset(-2, 0, 0), Blocks.BREWING_STAND.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(2, 0, 0), Blocks.BREWING_STAND.defaultBlockState(), 3);
+        // Chaudrons
+        dungeon.setBlock(room.center().offset(0, 0, -2), Blocks.CAULDRON.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(0, 0, 2), Blocks.CAULDRON.defaultBlockState(), 3);
+        // Bibliothèques de recettes
+        for (int x = -room.halfX() + 2; x <= room.halfX() - 2; x += 4) {
+            dungeon.setBlock(room.center().offset(x, 0, -room.halfZ() + 2), Blocks.BOOKSHELF.defaultBlockState(), 3);
+            dungeon.setBlock(room.center().offset(x, 1, -room.halfZ() + 2), Blocks.BOOKSHELF.defaultBlockState(), 3);
+        }
+        dungeon.setBlock(room.center(), Blocks.ENCHANTING_TABLE.defaultBlockState(), 3);
+        for (int x : new int[]{-3, 3}) {
+            for (int z : new int[]{-3, 3}) {
+                dungeon.setBlock(room.center().offset(x, 0, z), Blocks.CANDLE.defaultBlockState(), 3);
+            }
+        }
+    }
+
+    private static void decorateVoidShrineRoom(ServerLevel dungeon, DungeonRoom room, GateRank rank) {
+        // Sol en end stone bricks + obsidian
+        for (int x = -room.halfX() + 1; x <= room.halfX() - 1; x++) {
+            for (int z = -room.halfZ() + 1; z <= room.halfZ() - 1; z++) {
+                if ((x + z) % 3 == 0)
+                    dungeon.setBlock(room.center().offset(x, -1, z), Blocks.END_STONE_BRICKS.defaultBlockState(), 3);
+                else if ((Math.abs(x) + Math.abs(z)) % 5 == 0)
+                    dungeon.setBlock(room.center().offset(x, -1, z), Blocks.OBSIDIAN.defaultBlockState(), 3);
+            }
+        }
+        // Piliers d'end rod
+        for (int x : new int[]{-room.halfX() + 3, room.halfX() - 3}) {
+            for (int z : new int[]{-room.halfZ() + 3, room.halfZ() - 3}) {
+                for (int y = 0; y <= 3; y++)
+                    dungeon.setBlock(room.center().offset(x, y, z), Blocks.OBSIDIAN.defaultBlockState(), 3);
+                dungeon.setBlock(room.center().offset(x, 4, z), Blocks.END_ROD.defaultBlockState(), 3);
+            }
+        }
+        // Autel central end rod
+        dungeon.setBlock(room.center().offset(0, 0, 0), Blocks.CRYING_OBSIDIAN.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(0, 1, 0), Blocks.END_ROD.defaultBlockState(), 3);
+        dungeon.setBlock(room.center().offset(0, 2, 0), Blocks.END_ROD.defaultBlockState(), 3);
+    }
+
     // -------------------------------------------------------------------------
     // Corridors
     // -------------------------------------------------------------------------
@@ -909,7 +1393,7 @@ public final class GateManager {
                         dungeon.random.nextInt(7) - 3, 1, dungeon.random.nextInt(7) - 3);
                     mob.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
                         dungeon.random.nextFloat() * 360f, 0);
-                    applyHealthMultiplier(mob, GateRank.S);
+                    applyHealthMultiplier(mob, gate);
                     mob.setPersistenceRequired();
                     dungeon.addFreshEntity(mob);
                     gate.mobs.add(mob.getUUID());
@@ -922,8 +1406,10 @@ public final class GateManager {
         RandomSource random = dungeon.random;
         List<? extends String> mobs = gate.rank.mobs();
         Map<String, Integer> spawnedById = new HashMap<>();
-        int mobCount = gate.rank.minMobCount()
+        int baseMobCount = gate.rank.minMobCount()
             + random.nextInt(Math.max(1, gate.rank.maxMobCount() - gate.rank.minMobCount() + 1));
+        // +50% mobs per additional player
+        int mobCount = Math.round(baseMobCount * (1f + (gate.playerCount - 1) * 0.5f));
 
         // Only non-entrance rooms for spawning
         List<DungeonRoom> combatRooms = rooms.stream()
@@ -944,7 +1430,7 @@ public final class GateManager {
                         random.nextInt(Math.max(1, room.halfZ() * 2 - 3)) - room.halfZ() + 2);
                     mob.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
                         random.nextFloat() * 360f, 0);
-                    applyHealthMultiplier(mob, gate.rank);
+                    applyHealthMultiplier(mob, gate);
                     mob.setPersistenceRequired();
                     dungeon.addFreshEntity(mob);
                     gate.mobs.add(mob.getUUID());
@@ -953,9 +1439,34 @@ public final class GateManager {
         }
     }
 
-    /** Scale max HP by rank multiplier. */
-    private static void applyHealthMultiplier(Mob mob, GateRank rank) {
-        double mult = rank.mobHealthMultiplier();
+    private static void spawnExtraMobsForNewPlayer(ServerLevel dungeon, GateRecord gate) {
+        RandomSource random = dungeon.random;
+        List<? extends String> mobs = gate.rank.mobs();
+        Map<String, Integer> spawnedById = new HashMap<>();
+        int extra = Math.max(1, gate.rank.minMobCount() / 2);
+        for (int i = 0; i < extra; i++) {
+            randomMobId(gate.rank, mobs, spawnedById, random).flatMap(EntityType::byString).ifPresent(type -> {
+                Entity entity = type.create(dungeon);
+                if (entity instanceof Mob mob) {
+                    spawnedById.merge(EntityType.getKey(type).toString(), 1, Integer::sum);
+                    BlockPos pos = gate.dungeonPos.offset(
+                        random.nextInt(24) - 12, 1, random.nextInt(24) - 12);
+                    mob.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
+                        random.nextFloat() * 360f, 0);
+                    applyHealthMultiplier(mob, gate);
+                    mob.setPersistenceRequired();
+                    dungeon.addFreshEntity(mob);
+                    gate.mobs.add(mob.getUUID());
+                }
+            });
+        }
+    }
+
+    /** Scale max HP by rank multiplier + player count bonus (+25% HP per extra player). */
+    private static void applyHealthMultiplier(Mob mob, GateRecord gate) {
+        double rankMult = gate.rank.mobHealthMultiplier();
+        double playerMult = 1.0 + (gate.playerCount - 1) * 0.25;
+        double mult = rankMult * playerMult;
         if (mult <= 1.0) return;
         var attr = mob.getAttribute(Attributes.MAX_HEALTH);
         if (attr != null) {
@@ -1002,6 +1513,30 @@ public final class GateManager {
     }
 
     // -------------------------------------------------------------------------
+    // Startup cleanup
+    // -------------------------------------------------------------------------
+
+    /** Appelé au démarrage du serveur : nettoie les gates actives orphelines (crash, etc.). */
+    public static void cleanupOrphanedGates(MinecraftServer server) {
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+        if (overworld == null) return;
+        ServerLevel dungeon = server.getLevel(DUNGEON_LEVEL);
+        GateSavedData data = GateSavedData.get(server);
+        List<UUID> toRemove = new ArrayList<>();
+        for (GateRecord gate : data.gates()) {
+            if (gate.entryStarted && !gate.completed && !gate.failed) {
+                if (dungeon != null) clearDungeonSpace(dungeon, gate.dungeonPos);
+                removeGateBlocks(overworld, gate.overworldPos);
+                toRemove.add(gate.id);
+            }
+        }
+        if (!toRemove.isEmpty()) {
+            toRemove.forEach(data::removeGate);
+            data.setDirty();
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Gate completion / expiry / failure
     // -------------------------------------------------------------------------
 
@@ -1022,16 +1557,31 @@ public final class GateManager {
             Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, overworld.random.nextBoolean() ? Direction.NORTH : Direction.SOUTH));
         BlockEntity be = overworld.getBlockEntity(chestPos);
         if (be instanceof ChestBlockEntity chest) {
-            fillRewardChest(chest, gate, overworld.random);
+            fillRewardChest(chest, gate, overworld.random, gate.playerCount);
         }
         overworld.playSound(null, chestPos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1.4f, 0.8f);
 
         if (dungeon != null) {
             PlayerSavedData psd = PlayerSavedData.get(overworld.getServer());
+            List<? extends String> rewardTable = gate.bossGate ? SoloGatesConfig.BOSS_REWARDS.get() : gate.rank.rewards();
             for (ServerPlayer p : dungeon.getEntitiesOfClass(ServerPlayer.class,
                     new AABB(gate.dungeonPos).inflate(64, 16, 64))) {
                 PlayerData pd = psd.getOrCreate(p.getUUID());
                 pd.recordCompletion(gate.rank);
+                pd.incrementStreak();
+                SoloGatesNetwork.sendRankToPlayer(p, pd.confirmedRank(), pd.currentStreak());
+                int bonus = pd.streakBonusRolls();
+                if (bonus > 0) {
+                    for (int i = 0; i < bonus; i++) {
+                        ItemStack bonusItem = randomReward(rewardTable, overworld.random);
+                        if (!bonusItem.isEmpty()) p.addItem(bonusItem);
+                    }
+                    p.displayClientMessage(Component.translatable("sologates.message.streak_bonus",
+                        pd.currentStreak(), bonus).withStyle(ChatFormatting.GOLD), false);
+                } else if (pd.currentStreak() >= 2) {
+                    p.displayClientMessage(Component.translatable("sologates.message.streak_active",
+                        pd.currentStreak()).withStyle(ChatFormatting.YELLOW), false);
+                }
                 SoloGatesCriteria.GATE_COMPLETE.trigger(p, gate.rank, gate.bossGate, pd.completions(gate.rank));
                 SoloGatesCriteria.GATE_MILESTONE.trigger(p, pd.totalCompletions());
             }
@@ -1047,9 +1597,11 @@ public final class GateManager {
                 boolean frame = Math.abs(x) == 1 || y == 0 || y == 3;
                 dungeon.setBlockAndUpdate(pos,
                     frame ? Blocks.POLISHED_BLACKSTONE.defaultBlockState()
-                          : ModBlocks.gateBlock(gate.rank).defaultBlockState());
+                          : Blocks.AIR.defaultBlockState());
             }
         }
+        GateEntity returnPortal = GateEntity.create(dungeon, gate.rank, base.offset(0, 1, 0));
+        dungeon.addFreshEntity(returnPortal);
         BlockPos signPos = base.offset(0, 1, -1);
         dungeon.setBlockAndUpdate(signPos, Blocks.OAK_SIGN.defaultBlockState());
         BlockEntity be = dungeon.getBlockEntity(signPos);
@@ -1085,10 +1637,19 @@ public final class GateManager {
         ServerLevel dungeon = overworld.getServer().getLevel(DUNGEON_LEVEL);
         if (dungeon != null) {
             AABB arena = new AABB(gate.dungeonPos).inflate(64, 16, 64);
+            PlayerSavedData psd = PlayerSavedData.get(overworld.getServer());
             for (ServerPlayer player : dungeon.getEntitiesOfClass(ServerPlayer.class, arena)) {
+                PlayerData pd = psd.getOrCreate(player.getUUID());
+                if (pd.currentStreak() >= 2) {
+                    player.displayClientMessage(Component.translatable("sologates.message.streak_lost",
+                        pd.currentStreak()).withStyle(ChatFormatting.RED), false);
+                }
+                pd.resetStreak();
+                SoloGatesNetwork.sendRankToPlayer(player, pd.confirmedRank(), pd.currentStreak());
                 teleportToOverworld(player, gate);
                 player.displayClientMessage(Component.translatable("sologates.message.gate_closed").withStyle(ChatFormatting.RED), false);
             }
+            psd.markDirty();
             for (UUID mobId : gate.mobs) {
                 Entity mob = dungeon.getEntity(mobId);
                 if (mob != null) mob.discard();
@@ -1173,7 +1734,7 @@ public final class GateManager {
     // Reward chest
     // -------------------------------------------------------------------------
 
-    private static void fillRewardChest(ChestBlockEntity chest, GateRecord gate, RandomSource random) {
+    private static void fillRewardChest(ChestBlockEntity chest, GateRecord gate, RandomSource random, int playerCount) {
         GateRank rank = gate.rank;
         List<? extends String> rewards = gate.bossGate
             ? SoloGatesConfig.BOSS_REWARDS.get() : rank.rewards();
@@ -1185,12 +1746,34 @@ public final class GateManager {
             case S -> 6 + random.nextInt(3);
         };
         if (gate.bossGate) rolls += 2;
+        rolls += (playerCount - 1);
         for (int i = 0; i < rolls; i++) {
             ItemStack stack = randomReward(rewards, random);
             if (!stack.isEmpty()) {
                 chest.setItem(random.nextInt(chest.getContainerSize()), stack);
             }
         }
+        fillRewardChestApotheosis(chest, gate, random);
+    }
+
+    private static void fillRewardChestApotheosis(ChestBlockEntity chest, GateRecord gate, RandomSource random) {
+        if (gate.rank == GateRank.E && !gate.bossGate) return;
+        if (!(chest.getLevel() instanceof ServerLevel serverLevel)) return;
+        String tableName = gate.bossGate ? "gate_boss" : "gate_" + gate.rank.name().toLowerCase();
+        ResourceLocation tableId = new ResourceLocation("sologates", "chests/" + tableName);
+        try {
+            LootTable table = serverLevel.getServer().getLootData().getLootTable(tableId);
+            if (table == LootTable.EMPTY) return;
+            LootParams params = new LootParams.Builder(serverLevel)
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(chest.getBlockPos()))
+                .create(LootContextParamSets.CHEST);
+            List<ItemStack> items = table.getRandomItems(params);
+            for (ItemStack stack : items) {
+                if (!stack.isEmpty()) {
+                    chest.setItem(random.nextInt(chest.getContainerSize()), stack);
+                }
+            }
+        } catch (Exception ignored) {}
     }
 
     private static ItemStack randomReward(List<? extends String> rewards, RandomSource random) {
@@ -1243,7 +1826,9 @@ public final class GateManager {
 
     private enum RoomType {
         ENTRANCE, COMBAT, TREASURE, PUZZLE, BOSS,
-        CHAINS, CRYSTAL, RITUAL, THRONE
+        CHAINS, CRYSTAL, RITUAL, THRONE,
+        FORGE, LIBRARY, CATACOMB, ALTAR,
+        BARRACKS, PRISON, ALCHEMY, VOID_SHRINE
     }
 
     private GateManager() {}

@@ -14,6 +14,9 @@ public class PlayerData {
     private final Map<GateRank, Integer> kills = new EnumMap<>(GateRank.class);
     private int totalCompletions;
     private int totalKills;
+    private int currentStreak;
+    private int bestStreak;
+    private GateRank confirmedRank = GateRank.E;
 
     public PlayerData(java.util.UUID playerId) {
         this.playerId = playerId;
@@ -27,6 +30,28 @@ public class PlayerData {
     public void recordKills(GateRank rank, int count) {
         kills.merge(rank, count, Integer::sum);
         totalKills += count;
+    }
+
+    public void incrementStreak() {
+        currentStreak++;
+        if (currentStreak > bestStreak) bestStreak = currentStreak;
+    }
+
+    public void resetStreak() {
+        currentStreak = 0;
+    }
+
+    public int currentStreak() { return currentStreak; }
+    public int bestStreak() { return bestStreak; }
+    public GateRank confirmedRank() { return confirmedRank; }
+    public void setConfirmedRank(GateRank rank) { this.confirmedRank = rank; }
+
+    /** Bonus items à donner directement au joueur selon la série. */
+    public int streakBonusRolls() {
+        if (currentStreak >= 16) return 3;
+        if (currentStreak >= 10) return 2;
+        if (currentStreak >= 6) return 1;
+        return 0;
     }
 
     public int completions(GateRank rank) {
@@ -57,6 +82,8 @@ public class PlayerData {
         msg.append(Component.literal(hr.name()).withStyle(hr.color()));
         msg.append(Component.literal("\nDonjons terminés : " + totalCompletions).withStyle(ChatFormatting.WHITE));
         msg.append(Component.literal("\nMonstres tués : " + totalKills).withStyle(ChatFormatting.WHITE));
+        msg.append(Component.literal("\nSérie actuelle : " + currentStreak).withStyle(ChatFormatting.GOLD));
+        msg.append(Component.literal(" | Meilleure série : " + bestStreak).withStyle(ChatFormatting.YELLOW));
         msg.append(Component.literal("\n--- Par rang ---").withStyle(ChatFormatting.GRAY));
         for (GateRank rank : GateRank.values()) {
             int c = completions(rank);
@@ -84,6 +111,9 @@ public class PlayerData {
             killsTag.putInt(entry.getKey().name(), entry.getValue());
         }
         tag.put("Kills", killsTag);
+        tag.putInt("CurrentStreak", currentStreak);
+        tag.putInt("BestStreak", bestStreak);
+        tag.putString("ConfirmedRank", confirmedRank.name());
         return tag;
     }
 
@@ -103,6 +133,10 @@ public class PlayerData {
                 data.kills.put(rank, killsTag.getInt(rank.name()));
             }
         }
+        data.currentStreak = tag.getInt("CurrentStreak");
+        data.bestStreak = tag.getInt("BestStreak");
+        try { data.confirmedRank = GateRank.valueOf(tag.getString("ConfirmedRank")); }
+        catch (IllegalArgumentException ignored) {}
         return data;
     }
 }

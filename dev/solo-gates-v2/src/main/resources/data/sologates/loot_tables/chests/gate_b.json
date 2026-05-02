@@ -1,0 +1,37 @@
+{
+  "pools": [
+    {
+      "rolls": {
+        "min": 1,
+        "max": 2,
+        "type": "minecraft:uniform"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "item": "apotheosis:gem_dust",
+          "weight": 40,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        },
+        {
+          "type": "apotheosis:random_gem",
+          "weight": 15,
+          "quality": 0
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 45
+        }
+      ]
+    }
+  ]
+}

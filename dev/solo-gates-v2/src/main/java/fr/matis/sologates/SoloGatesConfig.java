@@ -15,6 +15,7 @@ public final class SoloGatesConfig {
     public static final ForgeConfigSpec.IntValue SPAWN_RADIUS_MAX;
     public static final ForgeConfigSpec.IntValue GATE_LIFETIME_SECONDS;
     public static final ForgeConfigSpec.IntValue BOSS_GATE_CHANCE_PERCENT;
+    public static final ForgeConfigSpec.IntValue PLAYER_RANK_GATE_BONUS_PERCENT;
     public static final ForgeConfigSpec.IntValue BOSS_MOB_COUNT;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> RANK_WEIGHTS;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> RANK_SPAWN_INTERVALS;
@@ -81,15 +82,16 @@ public final class SoloGatesConfig {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         builder.push("spawn");
-        MAX_ACTIVE_GATES = builder.comment("Maximum de portails actifs en meme temps.").defineInRange("maxActiveGates", 2, 1, 16);
+        MAX_ACTIVE_GATES = builder.comment("Maximum de portails actifs en meme temps.").defineInRange("maxActiveGates", 4, 1, 16);
         WORLD_SPAWN_INTERVAL_SECONDS = builder.comment("Temps minimum entre deux spawns globaux.").defineInRange("worldSpawnIntervalSeconds", 600, 60, 86400);
-        PLAYER_COOLDOWN_SECONDS = builder.comment("Cooldown par joueur entre deux portails.").defineInRange("playerCooldownSeconds", 1200, 60, 86400);
+        PLAYER_COOLDOWN_SECONDS = builder.comment("Cooldown par joueur entre deux portails.").defineInRange("playerCooldownSeconds", 600, 60, 86400);
         SPAWN_RADIUS_MIN = builder.defineInRange("spawnRadiusMin", 50, 8, 512);
         SPAWN_RADIUS_MAX = builder.defineInRange("spawnRadiusMax", 80, 16, 1024);
         GATE_LIFETIME_SECONDS = builder.comment("Temps avant disparition d'un portail non termine.").defineInRange("gateLifetimeSeconds", 300, 60, 172800);
         RANK_WEIGHTS = builder.comment("Poids des rangs: RANG=poids.").defineList("rankWeights", List.of("E=58","C=24","B=11","A=5","S=2"), SoloGatesConfig::isWeightedRank);
         RANK_SPAWN_INTERVALS = builder.comment("Cooldown global par rang: RANG=secondes.").defineList("rankSpawnIntervals", List.of("E=600","C=900","B=1200","A=1500","S=1800"), SoloGatesConfig::isWeightedRank);
         BOSS_GATE_CHANCE_PERCENT = builder.comment("Chance (%) qu'un portail devienne un portail boss.").defineInRange("bossGateChancePercent", 1, 0, 100);
+        PLAYER_RANK_GATE_BONUS_PERCENT = builder.comment("Bonus (%) qu'un portail naturel autour d'un joueur soit de son rang confirme. 0 = desactive.").defineInRange("playerRankGateBonusPercent", 5, 0, 100);
         BOSS_MOB_COUNT = builder.comment("Nombre de mobs dans un portail boss.").defineInRange("bossMobCount", 3, 1, 16);
         builder.pop();
 
@@ -97,18 +99,18 @@ public final class SoloGatesConfig {
         RANK_E_MOBS = mobList(builder, "rankE", List.of("minecraft:zombie","minecraft:skeleton","minecraft:spider","minecraft:husk","minecraft:drowned","minecraft:slime"));
         RANK_C_MOBS = mobList(builder, "rankC", List.of("minecraft:zombie","minecraft:skeleton","minecraft:spider","minecraft:husk","minecraft:drowned","minecraft:slime","minecraft:witch","minecraft:pillager","minecraft:ravager","minecraft:stray","minecraft:blaze","minecraft:magma_cube"));
         RANK_B_MOBS = mobList(builder, "rankB", List.of("minecraft:witch","minecraft:pillager","minecraft:ravager","minecraft:drowned","minecraft:blaze","minecraft:husk","minecraft:cave_spider","minecraft:vindicator","minecraft:wither_skeleton","minecraft:magma_cube"));
-        RANK_A_MOBS = mobList(builder, "rankA", List.of("minecraft:wither_skeleton","minecraft:magma_cube","minecraft:piglin","minecraft:hoglin","minecraft:zoglin","minecraft:evoker","minecraft:husk","cataclysm:ignited_revenant","minecraft:enderman","minecraft:cave_spider","minecraft:blaze"));
+        RANK_A_MOBS = mobList(builder, "rankA", List.of("minecraft:wither_skeleton","minecraft:magma_cube","minecraft:piglin","minecraft:hoglin","minecraft:zoglin","minecraft:evoker","minecraft:husk","cataclysm:ignited_revenant","minecraft:cave_spider","minecraft:blaze"));
         RANK_S_MOBS = mobList(builder, "rankS", List.of("cataclysm:ignited_revenant","minecraft:blaze","mowziesmobs:ferrous_wroughtnaut","minecraft:husk"));
         BOSS_FALLBACK_MOBS = mobList(builder, "bossFallback", List.of("cataclysm:ignited_revenant","minecraft:blaze","mowziesmobs:ferrous_wroughtnaut","minecraft:husk"));
         builder.pop();
 
         builder.push("rewards");
-        RANK_E_REWARDS = rewardList(builder, "rankE", List.of("minecraft:iron_ingot:2:6:45","minecraft:bread:3:8:35","minecraft:emerald:1:2:12","minecraft:diamond:1:1:3"));
-        RANK_C_REWARDS = rewardList(builder, "rankC", List.of("minecraft:gold_ingot:3:8:35","minecraft:experience_bottle:6:14:30","minecraft:diamond:1:3:18","minecraft:golden_apple:1:1:7"));
-        RANK_B_REWARDS = rewardList(builder, "rankB", List.of("minecraft:diamond:3:8:35","minecraft:netherite_scrap:1:2:14","minecraft:golden_apple:1:2:18","minecraft:enchanted_golden_apple:1:1:3"));
-        RANK_A_REWARDS = rewardList(builder, "rankA", List.of("minecraft:diamond:5:10:32","minecraft:netherite_scrap:1:3:18","minecraft:golden_apple:1:3:18","minecraft:totem_of_undying:1:1:5","minecraft:enchanted_golden_apple:1:1:4"));
-        RANK_S_REWARDS = rewardList(builder, "rankS", List.of("minecraft:diamond:8:16:28","minecraft:netherite_scrap:2:5:20","minecraft:netherite_ingot:1:2:8","minecraft:totem_of_undying:1:1:8","minecraft:enchanted_golden_apple:1:2:4"));
-        BOSS_REWARDS = rewardList(builder, "boss", List.of("minecraft:netherite_ingot:2:4:20","minecraft:totem_of_undying:1:2:18","minecraft:enchanted_golden_apple:1:2:12","minecraft:nether_star:1:1:4"));
+        RANK_E_REWARDS = rewardList(builder, "rankE", List.of("minecraft:iron_ingot:2:4:38","minecraft:bread:2:5:34","minecraft:coal:4:10:28","minecraft:torch:8:16:24","minecraft:arrow:6:14:18","sologates:bronze_coin:1:2:18","minecraft:string:2:5:14","minecraft:bone:2:6:14","minecraft:slime_ball:1:3:8","minecraft:emerald:1:1:8","minecraft:diamond:1:1:2"));
+        RANK_C_REWARDS = rewardList(builder, "rankC", List.of("minecraft:gold_ingot:2:5:30","minecraft:experience_bottle:4:8:28","minecraft:lapis_lazuli:6:14:24","minecraft:redstone:8:18:22","minecraft:glowstone_dust:3:8:18","sologates:silver_coin:1:2:16","minecraft:iron_ingot:3:7:16","minecraft:blaze_powder:2:5:12","minecraft:diamond:1:2:12","minecraft:golden_apple:1:1:5"));
+        RANK_B_REWARDS = rewardList(builder, "rankB", List.of("minecraft:diamond:2:5:28","minecraft:experience_bottle:8:16:24","minecraft:emerald:2:6:18","sologates:gold_coin:1:2:16","minecraft:blaze_rod:1:3:15","minecraft:golden_apple:1:1:14","minecraft:netherite_scrap:1:1:8","minecraft:ghast_tear:1:1:8","minecraft:amethyst_shard:4:10:8","minecraft:enchanted_golden_apple:1:1:2"));
+        RANK_A_REWARDS = rewardList(builder, "rankA", List.of("minecraft:diamond:3:7:26","minecraft:experience_bottle:12:24:20","minecraft:netherite_scrap:1:2:16","minecraft:golden_apple:1:2:16","sologates:gold_coin:2:4:14","minecraft:echo_shard:1:3:8","minecraft:totem_of_undying:1:1:6","sologates:platinum_coin:1:1:5","minecraft:heart_of_the_sea:1:1:4","minecraft:enchanted_golden_apple:1:1:3"));
+        RANK_S_REWARDS = rewardList(builder, "rankS", List.of("minecraft:diamond:4:10:22","minecraft:netherite_scrap:1:3:18","minecraft:experience_bottle:18:32:18","sologates:platinum_coin:1:2:14","minecraft:totem_of_undying:1:1:10","minecraft:dragon_breath:1:3:8","minecraft:echo_shard:2:5:8","minecraft:netherite_ingot:1:1:7","minecraft:enchanted_golden_apple:1:1:5","minecraft:nether_star:1:1:2"));
+        BOSS_REWARDS = rewardList(builder, "boss", List.of("sologates:platinum_coin:2:4:18","minecraft:experience_bottle:24:48:18","minecraft:netherite_ingot:1:2:16","minecraft:totem_of_undying:1:1:16","minecraft:dragon_breath:2:5:10","minecraft:echo_shard:3:6:10","minecraft:enchanted_golden_apple:1:1:10","minecraft:nether_star:1:1:5"));
         builder.pop();
 
         builder.push("xp");
@@ -123,8 +125,8 @@ public final class SoloGatesConfig {
         MOB_HP_MULT_E = builder.comment("Multiplicateur de PV des mobs rang E. 1.0 = normal.").defineInRange("mobHpMultE", 1.0, 0.1, 20.0);
         MOB_HP_MULT_C = builder.comment("Multiplicateur de PV des mobs rang C.").defineInRange("mobHpMultC", 1.5, 0.1, 20.0);
         MOB_HP_MULT_B = builder.comment("Multiplicateur de PV des mobs rang B.").defineInRange("mobHpMultB", 2.5, 0.1, 20.0);
-        MOB_HP_MULT_A = builder.comment("Multiplicateur de PV des mobs rang A.").defineInRange("mobHpMultA", 4.0, 0.1, 20.0);
-        MOB_HP_MULT_S = builder.comment("Multiplicateur de PV des mobs rang S.").defineInRange("mobHpMultS", 7.0, 0.1, 20.0);
+        MOB_HP_MULT_A = builder.comment("Multiplicateur de PV des mobs rang A.").defineInRange("mobHpMultA", 3.4, 0.1, 20.0);
+        MOB_HP_MULT_S = builder.comment("Multiplicateur de PV des mobs rang S.").defineInRange("mobHpMultS", 5.95, 0.1, 20.0);
         INVASION_PERCENT = builder.comment("Pourcentage des mobs restants qui envahissent l'Overworld si echec (0-100).").defineInRange("invasionPercent", 60, 0, 100);
         builder.pop();
 

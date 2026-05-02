@@ -16,6 +16,10 @@ out
 # gradle
 build
 .gradle
+.gradle-cache
+
+# generated/local
+tmp
 
 # other
 eclipse

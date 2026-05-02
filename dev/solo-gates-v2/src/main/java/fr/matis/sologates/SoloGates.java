@@ -3,6 +3,7 @@ package fr.matis.sologates;
 import com.mojang.logging.LogUtils;
 import fr.matis.sologates.client.GateBlockEntityRenderer;
 import fr.matis.sologates.client.GateEntityRenderer;
+import fr.matis.sologates.network.SoloGatesNetwork;
 import fr.matis.sologates.registry.ModBlockEntities;
 import fr.matis.sologates.registry.ModBlocks;
 import fr.matis.sologates.registry.ModEntities;
@@ -32,6 +33,7 @@ public class SoloGates {
         ModEntities.ENTITIES.register(modBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SoloGatesConfig.SPEC);
         SoloGatesCriteria.register();
+        SoloGatesNetwork.register();
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modBus.addListener(SoloGates::onClientSetup);

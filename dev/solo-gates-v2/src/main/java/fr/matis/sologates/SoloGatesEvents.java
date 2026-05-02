@@ -8,7 +8,9 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -35,6 +37,7 @@ public final class SoloGatesEvents {
     public static void onLivingDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity instanceof ServerPlayer player) {
+            CrimeStatManager.onPlayerKilled(player, event.getSource().getEntity());
             GateManager.onPlayerDeath(player);
         } else {
             GateManager.onMobKilled((Entity) entity);
@@ -44,6 +47,30 @@ public final class SoloGatesEvents {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         SoloGatesCommands.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        GateManager.cleanupOrphanedGates(event.getServer());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        CrimeStatManager.syncCrimeStat(player);
+        // Si le joueur était dans le donjon au moment de la déconnexion, le renvoyer en Overworld
+        if (player.serverLevel().dimension().equals(GateManager.DUNGEON_LEVEL)) {
+            if (!GateManager.leaveDungeon(player)) {
+                // Gate introuvable (donjon nettoyé au redémarrage) → spawn Overworld
+                ServerLevel overworld = player.server.getLevel(Level.OVERWORLD);
+                if (overworld != null) {
+                    net.minecraft.core.BlockPos spawn = overworld.getSharedSpawnPos();
+                    player.teleportTo(overworld,
+                        spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5,
+                        player.getYRot(), player.getXRot());
+                }
+            }
+        }
     }
 
     @SubscribeEvent

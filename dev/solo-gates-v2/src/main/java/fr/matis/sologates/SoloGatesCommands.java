@@ -1,7 +1,9 @@
 package fr.matis.sologates;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import fr.matis.sologates.network.SoloGatesNetwork;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -34,6 +36,36 @@ public final class SoloGatesCommands {
                     .then(Commands.argument("player", StringArgumentType.word())
                         .requires(src -> src.hasPermission(2))
                         .executes(ctx -> showStats(ctx.getSource(), StringArgumentType.getString(ctx, "player")))))
+                .then(Commands.literal("setrank")
+                    .requires(src -> src.hasPermission(2))
+                    .then(Commands.argument("player", StringArgumentType.word())
+                        .then(Commands.argument("rank", StringArgumentType.word())
+                            .suggests((ctx, builder) -> {
+                                for (GateRank r : GateRank.values()) builder.suggest(r.name());
+                                return builder.buildFuture();
+                            })
+                            .executes(ctx -> setRank(ctx.getSource(),
+                                StringArgumentType.getString(ctx, "player"),
+                                StringArgumentType.getString(ctx, "rank"))))))
+                .then(Commands.literal("crimestat")
+                    .executes(ctx -> showCrimeStat(ctx.getSource(), null))
+                    .then(Commands.literal("get")
+                        .executes(ctx -> showCrimeStat(ctx.getSource(), null))
+                        .then(Commands.argument("player", StringArgumentType.word())
+                            .requires(src -> src.hasPermission(2))
+                            .executes(ctx -> showCrimeStat(ctx.getSource(), StringArgumentType.getString(ctx, "player")))))
+                    .then(Commands.literal("set")
+                        .requires(src -> src.hasPermission(2))
+                        .then(Commands.argument("player", StringArgumentType.word())
+                            .then(Commands.argument("level", IntegerArgumentType.integer(0, 3))
+                                .executes(ctx -> setCrimeStat(ctx.getSource(),
+                                    StringArgumentType.getString(ctx, "player"),
+                                    IntegerArgumentType.getInteger(ctx, "level"))))))
+                    .then(Commands.literal("clear")
+                        .requires(src -> src.hasPermission(2))
+                        .then(Commands.argument("player", StringArgumentType.word())
+                            .executes(ctx -> setCrimeStat(ctx.getSource(),
+                                StringArgumentType.getString(ctx, "player"), 0)))))
         );
     }
 
@@ -119,6 +151,89 @@ public final class SoloGatesCommands {
         PlayerData pd = psd.getOrCreate(target.getUUID());
         source.sendSuccess(() -> pd.statsComponent(), false);
         return 1;
+    }
+
+    private static int setRank(CommandSourceStack source, String playerName, String rankName) {
+        ServerPlayer target = source.getServer().getPlayerList().getPlayerByName(playerName);
+        if (target == null) {
+            source.sendFailure(Component.translatable("sologates.command.player_not_found", playerName));
+            return 0;
+        }
+        GateRank rank;
+        try {
+            rank = GateRank.valueOf(rankName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            source.sendFailure(Component.translatable("sologates.command.rank_unknown"));
+            return 0;
+        }
+        PlayerSavedData psd = PlayerSavedData.get(source.getServer());
+        PlayerData pd = psd.getOrCreate(target.getUUID());
+        pd.setConfirmedRank(rank);
+        psd.setDirty();
+        SoloGatesNetwork.sendRankToPlayer(target, rank, pd.currentStreak());
+
+        // Grant GameStage for modpack progression gating
+        String stage = "rank_" + rank.name().toLowerCase();
+        try {
+            source.getServer().getCommands().performPrefixedCommand(
+                source.getServer().createCommandSourceStack().withPermission(4),
+                "gamestage add " + target.getName().getString() + " " + stage
+            );
+        } catch (Exception ignored) {}
+
+        source.sendSuccess(() -> Component.translatable("sologates.command.setrank_success",
+            target.getName(), Component.literal(rank.name()).withStyle(rank.color())), true);
+        target.displayClientMessage(Component.translatable("sologates.message.rank_promoted",
+            Component.literal(rank.name()).withStyle(rank.color())).withStyle(ChatFormatting.GOLD), false);
+        Component broadcast = Component.translatable("sologates.message.rank_broadcast",
+            target.getName(),
+            Component.literal(rank.name()).withStyle(rank.color()));
+        source.getServer().getPlayerList().broadcastSystemMessage(broadcast, false);
+        return 1;
+    }
+
+    private static int showCrimeStat(CommandSourceStack source, String targetName) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer target = findTarget(source, targetName);
+        if (target == null) return 0;
+        int level = CrimeStatManager.crimeLevel(target);
+        source.sendSuccess(() -> Component.translatable("sologates.command.crimestat_get",
+            target.getName(), Component.literal(String.valueOf(level)).withStyle(crimeColor(level))), false);
+        return 1;
+    }
+
+    private static int setCrimeStat(CommandSourceStack source, String playerName, int level) {
+        ServerPlayer target = source.getServer().getPlayerList().getPlayerByName(playerName);
+        if (target == null) {
+            source.sendFailure(Component.translatable("sologates.command.player_not_found", playerName));
+            return 0;
+        }
+        CrimeSavedData data = CrimeSavedData.get(source.getServer());
+        CrimeStatData crime = data.getOrCreate(target.getUUID());
+        crime.setLevel(level);
+        data.setDirty();
+        CrimeStatManager.syncCrimeStat(target);
+        source.sendSuccess(() -> Component.translatable("sologates.command.crimestat_set",
+            target.getName(), Component.literal(String.valueOf(level)).withStyle(crimeColor(level))), true);
+        return 1;
+    }
+
+    private static ServerPlayer findTarget(CommandSourceStack source, String targetName) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        if (targetName == null) return source.getPlayerOrException();
+        ServerPlayer target = source.getServer().getPlayerList().getPlayerByName(targetName);
+        if (target == null) {
+            source.sendFailure(Component.translatable("sologates.command.player_not_found", targetName));
+            return null;
+        }
+        return target;
+    }
+
+    private static ChatFormatting crimeColor(int level) {
+        return switch (level) {
+            case 1 -> ChatFormatting.GOLD;
+            case 2 -> ChatFormatting.RED;
+            case 3 -> ChatFormatting.DARK_RED;
+            default -> ChatFormatting.GRAY;
+        };
     }
 
     private SoloGatesCommands() {}

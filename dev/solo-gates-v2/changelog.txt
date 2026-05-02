@@ -1,3 +1,117 @@
+Solo Gates - Patch note joueurs
+Version: 0.2.1
+Minecraft: 1.20.1
+Forge: 47.3.22
+Date: 02/05/2026
+====
+
+Mise a jour Crime Stat
+
+Cette version ajoute un nouveau systeme PvP pour encadrer les combats entre joueurs
+et donner une vraie consequence aux assassinats de citoyens.
+
+Nouveautes principales
+ - Ajout du Crime Stat, affiche sous le rang de chasseur en jeu.
+ - Un joueur qui tue un citoyen gagne du Crime Stat.
+ - Le Crime Stat est permanent tant que le criminel n'est pas tue par un autre joueur.
+ - Le Crime Stat est limite au niveau 3.
+ - Quand un criminel est elimine par un citoyen, son Crime Stat est efface.
+
+Progression Crime Stat
+ - 1 kill citoyen: Crime Stat 1.
+ - 2 kills citoyens: Crime Stat 2.
+ - 3 kills citoyens: Crime Stat 3.
+ - Au-dela, le joueur reste Crime Stat 3.
+
+Vol de points de competence
+ - Un criminel peut voler 1 point de competence maximum par kill citoyen.
+ - Crime Stat 1: jusqu'a 2 vols de points sur 24h.
+ - Crime Stat 2: jusqu'a 3 vols de points sur 24h.
+ - Crime Stat 3: jusqu'a 4 vols de points sur 24h.
+ - Si la victime n'a aucun point disponible, aucun point n'est gagne.
+ - Meme si aucun point n'est vole, la tentative consomme quand meme un vol possible.
+
+Primes et chasse aux criminels
+ - Un citoyen qui tue un criminel recupere une prime en points de competence.
+ - La prime depend du Crime Stat du criminel:
+   - Crime Stat 1: jusqu'a 1 point.
+   - Crime Stat 2: jusqu'a 2 points.
+   - Crime Stat 3: jusqu'a 3 points.
+ - Le criminel perd uniquement les points de competence disponibles.
+ - Si le criminel n'a aucun point disponible, la prime peut etre de 0.
+
+Qualite de jeu
+ - Le systeme est sauvegarde cote serveur.
+ - Le Crime Stat est synchronise a la connexion.
+ - Ajout de messages en jeu pour les vols, primes et changements de Crime Stat.
+ - Integration avec Passive Skill Tree pour transferer les points de competence.
+
+Notes
+ - Cette fonctionnalite vise surtout les serveurs multijoueurs.
+ - Les valeurs peuvent encore etre ajustees selon les tests et le ressenti des joueurs.
+
+====
+
+Solo Gates - Patch note joueurs
+Version: 0.2.0
+Minecraft: 1.20.1
+Forge: 47.3.22
+Date: 01/05/2026
+====
+
+Bienvenue dans Solo Gates.
+Cette mise a jour pose les bases du systeme de portails solo: progression par rang,
+donjons, recompenses, armures et premiers effets visuels propres pour le modpack.
+
+Nouveautes principales
+ - Ajout des Solo Gates, des portails classes par rang: E, C, B, A et S.
+ - Chaque rang propose une difficulte, une couleur et des recompenses differentes.
+ - Ajout d'un systeme de progression joueur avec rang, statistiques et suivi des gates.
+ - Ajout d'une gate de boss pour des combats plus importants.
+ - Ajout de nouveaux succes lies aux gates, a la progression et aux objectifs de portail.
+
+Portails
+ - Les gates sont maintenant affichees comme de vrais portails animes.
+ - Nouveau visuel de vortex avec spirale, anneau lumineux et petites etincelles.
+ - Les portails gardent la couleur de leur rang sans cacher les details du vortex.
+ - Les portails actifs sont suivis par le mod jusqu'a leur fin ou leur echec.
+
+Progression
+ - Ajout des rangs E, C, B, A et S.
+ - Le rang du joueur est sauvegarde et synchronise a la connexion.
+ - Les statistiques joueur peuvent etre consultees en jeu.
+ - Les succes Solo Gates permettent de suivre la progression.
+
+Equipement et recompenses
+ - Ajout de nouveaux sets d'armure pour chaque rang.
+ - Ajout de monnaies: bronze, silver, gold et platinum coins.
+ - Les armures ont des statistiques qui montent avec le rang.
+ - Les textures d'armure ont ete refaites pour etre plus lisibles et ressembler davantage a de vraies armures Minecraft.
+
+Qualite visuelle
+ - Refonte des textures portees des armures.
+ - Amelioration du portail principal utilise par les gates.
+ - Couleurs de rang plus lisibles:
+   - E: gris simple
+   - C: vert
+   - B: bleu
+   - A: violet/orange
+   - S: noir/rouge
+ - Suppression de l'affichage Solo Gates autour de la barre d'armure, trop visible en jeu.
+
+Commandes utiles
+ - /sologates leave: quitter une gate ou un donjon.
+ - /sologates stats: afficher ses statistiques Solo Gates.
+ - /sologates spawn <rank>: creer une gate d'un rang precis. Admin uniquement.
+ - /sologates spawnboss: creer une gate de boss. Admin uniquement.
+ - /sologates status: voir les gates actives. Admin uniquement.
+ - /sologates setrank <player> <rank>: modifier le rang d'un joueur. Admin uniquement.
+
+Notes
+ - Cette version est une base de developpement jouable.
+ - L'equilibrage des mobs, recompenses et rangs pourra encore changer apres les tests.
+ - Les prochaines passes graphiques viseront surtout les icones d'items, les monnaies et les particules autour des gates.
+
 1.20.1 Changelog
 47.3
 ====

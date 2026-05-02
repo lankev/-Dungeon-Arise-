@@ -29,9 +29,9 @@ public class GateEntityRenderer<T extends GateEntity> extends EntityRenderer<T> 
 
     // [scale, rotation_speed_deg_per_tick, alpha]
     private static final float[][] LAYERS = {
-        {1.00f,  0.40f, 0.80f},
-        {0.80f, -0.70f, 0.90f},
-        {0.55f,  1.20f, 1.00f},
+        {1.00f,  0.40f, 0.46f},
+        {0.80f, -0.70f, 0.54f},
+        {0.55f,  1.20f, 0.62f},
     };
 
     public GateEntityRenderer(EntityRendererProvider.Context ctx) {
@@ -58,9 +58,11 @@ public class GateEntityRenderer<T extends GateEntity> extends EntityRenderer<T> 
         poseStack.scale(3.0f, 3.0f, 3.0f);
 
         VertexConsumer vc = bufferSource.getBuffer(RENDER_TYPE);
-        for (float[] layer : LAYERS) {
+        for (int i = 0; i < LAYERS.length; i++) {
+            float[] layer = LAYERS[i];
             poseStack.pushPose();
             poseStack.scale(layer[0], layer[0], layer[0]);
+            poseStack.translate(0.0f, 0.0f, i * 0.006f);
             poseStack.mulPose(Axis.ZP.rotationDegrees(time * layer[1]));
             drawQuad(poseStack, vc, c[0], c[1], c[2], layer[2]);
             poseStack.popPose();

@@ -32,11 +32,13 @@ public class GateBlockEntityRenderer implements BlockEntityRenderer<GateBlockEnt
     // Portal display size: 3x3 blocks
     private static final float SIZE = 3.0f;
 
-    // 3 layers: [scale, rotation_speed_deg_per_tick, alpha]
+    // 5 layers: [scale, rotation_speed_deg_per_tick, alpha]
     private static final float[][] LAYERS = {
-        {1.10f,  0.50f, 0.55f},
-        {0.85f, -0.80f, 0.80f},
-        {0.55f,  1.30f, 0.95f},
+        {1.45f,  0.15f, 0.06f},  // outer glow halo
+        {1.15f,  0.40f, 0.14f},  // outer ring
+        {0.88f, -0.70f, 0.22f},  // mid ring (counter-rotate)
+        {0.62f,  1.10f, 0.30f},  // inner ring
+        {0.38f, -1.80f, 0.36f},  // core
     };
 
     public GateBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {}
@@ -61,11 +63,13 @@ public class GateBlockEntityRenderer implements BlockEntityRenderer<GateBlockEnt
         // Scale to 3x3 blocks
         poseStack.scale(SIZE, SIZE, SIZE);
 
+        float pulse = 0.82f + 0.18f * (float) Math.sin(time * 0.04f);
+
         VertexConsumer vc = buffers.getBuffer(RENDER_TYPE);
         for (float[] layer : LAYERS) {
             float scale = layer[0];
             float angle = time * layer[1];
-            float alpha = layer[2];
+            float alpha = layer[2] * pulse;
 
             poseStack.pushPose();
             poseStack.scale(scale, scale, scale);
