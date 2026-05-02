@@ -65,6 +65,7 @@ public final class SoloGatesEvents {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         CrimeStatManager.syncCrimeStat(player);
+        GateManager.syncPlayerRank(player, false);
         CrimeSavedData crimeData = CrimeSavedData.get(player.server);
         crimeData.allEntries().forEach((uuid, data) -> {
             if (data.level() > 0)

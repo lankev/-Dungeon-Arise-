@@ -180,14 +180,7 @@ public final class SoloGatesCommands {
         psd.setDirty();
         SoloGatesNetwork.sendRankToPlayer(target, rank, pd.currentStreak());
 
-        // Grant GameStage for modpack progression gating
-        String stage = "rank_" + rank.name().toLowerCase();
-        try {
-            source.getServer().getCommands().performPrefixedCommand(
-                source.getServer().createCommandSourceStack().withPermission(4),
-                "gamestage add " + target.getName().getString() + " " + stage
-            );
-        } catch (Exception ignored) {}
+        GateManager.grantRankStages(target, rank);
 
         source.sendSuccess(() -> Component.translatable("sologates.command.setrank_success",
             target.getName(), Component.literal(rank.name()).withStyle(rank.color())), true);

@@ -51,6 +51,8 @@ public final class GateManager {
 
     private static final int DUNGEON_SPACING = 256;
 
+    private static final List<GateRank> STAGED_RANKS = List.of(GateRank.C, GateRank.B, GateRank.A, GateRank.S);
+
     // -------------------------------------------------------------------------
     // Server tick
     // -------------------------------------------------------------------------
@@ -319,6 +321,51 @@ public final class GateManager {
         if (gate.isEmpty()) return false;
         teleportToOverworld(player, gate.get());
         return true;
+    }
+
+    public static void grantRankStages(ServerPlayer player, GateRank rank) {
+        for (GateRank stagedRank : STAGED_RANKS) {
+            if (rank.ordinal() < stagedRank.ordinal()) continue;
+
+            try {
+                player.server.getCommands().performPrefixedCommand(
+                    player.server.createCommandSourceStack().withPermission(4),
+                    "gamestage add " + player.getName().getString() + " rank_" + stagedRank.name().toLowerCase()
+                );
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public static void syncPlayerRank(ServerPlayer player, boolean announcePromotion) {
+        PlayerSavedData psd = PlayerSavedData.get(player.server);
+        PlayerData pd = psd.getOrCreate(player.getUUID());
+        if (syncPlayerRank(player, pd, announcePromotion)) {
+            psd.markDirty();
+        }
+    }
+
+    private static boolean syncPlayerRank(ServerPlayer player, PlayerData pd, boolean announcePromotion) {
+        GateRank previousRank = pd.confirmedRank();
+        GateRank earnedRank = pd.hunterRank();
+        GateRank currentRank = earnedRank.ordinal() > previousRank.ordinal() ? earnedRank : previousRank;
+        boolean promoted = currentRank != previousRank;
+
+        if (promoted) {
+            pd.setConfirmedRank(currentRank);
+            if (announcePromotion) {
+                player.displayClientMessage(Component.translatable("sologates.message.rank_promoted",
+                    Component.literal(currentRank.name()).withStyle(currentRank.color())).withStyle(ChatFormatting.GOLD), false);
+                Component broadcast = currentRank == GateRank.S
+                    ? Component.translatable("sologates.broadcast.rank_s", player.getName()).withStyle(ChatFormatting.GOLD)
+                    : Component.translatable("sologates.message.rank_broadcast",
+                        player.getName(), Component.literal(currentRank.name()).withStyle(currentRank.color()));
+                player.server.getPlayerList().broadcastSystemMessage(broadcast, false);
+            }
+        }
+
+        grantRankStages(player, currentRank);
+        SoloGatesNetwork.sendRankToPlayer(player, currentRank, pd.currentStreak());
+        return promoted;
     }
 
     private static void useReturnGate(ServerPlayer player, BlockPos clickedPos) {
@@ -1603,7 +1650,7 @@ public final class GateManager {
                 PlayerData pd = psd.getOrCreate(p.getUUID());
                 pd.recordCompletion(gate.rank);
                 pd.incrementStreak();
-                SoloGatesNetwork.sendRankToPlayer(p, pd.confirmedRank(), pd.currentStreak());
+                syncPlayerRank(p, pd, true);
                 int bonus = pd.streakBonusRolls();
                 if (bonus > 0) {
                     for (int i = 0; i < bonus; i++) {
