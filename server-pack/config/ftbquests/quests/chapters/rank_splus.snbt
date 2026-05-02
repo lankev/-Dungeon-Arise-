@@ -1,0 +1,435 @@
+﻿{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "rank_splus"
+	group: ""
+	icon: "minecraft:nether_star"
+	id: "0000000060000000"
+	order_index: 7
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["00000000500F0000"]
+			description: ["Mille quatre cents ennemis. Le tribut que le Monarque exige avant de vous reconnaître."]
+			id: "0000000060010000"
+			rewards: [
+				{
+					count: 64
+					id: "0000000060010004"
+					item: "minecraft:emerald"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "0000000060010005"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					entity: "minecraft:zombie"
+					id: "0000000060010001"
+					type: "kill"
+					value: 575L
+				}
+				{
+					entity: "minecraft:enderman"
+					id: "0000000060010002"
+					type: "kill"
+					value: 575L
+				}
+				{
+					entity: "minecraft:blaze"
+					id: "0000000060010003"
+					type: "kill"
+					value: 460L
+				}
+			]
+			title: "Armée du Monarque"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000060010000"]
+			description: ["Cent vingt Endermen : vous avez appris à ne plus jamais les regarder dans les yeux."]
+			id: "0000000060020000"
+			rewards: [{
+				count: 32
+				id: "0000000060020002"
+				item: "minecraft:ender_pearl"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:enderman"
+				id: "0000000060020001"
+				type: "kill"
+				value: 138L
+			}]
+			title: "Enderman : Leçon Finale"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000060020000"]
+			description: ["Quatre-vingts Blazes. Les forteresses du Nether ne sont plus que ruines."]
+			id: "0000000060030000"
+			rewards: [{
+				count: 32
+				id: "0000000060030002"
+				item: "minecraft:blaze_rod"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:blaze"
+				id: "0000000060030001"
+				type: "kill"
+				value: 92L
+			}]
+			title: "Incendie Perpétuel"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000060030000"]
+			description: ["Deux cent cinquante ennemis dans un déluge de combat. Résistez jusqu'au bout."]
+			id: "0000000060040000"
+			rewards: [{
+				count: 16
+				id: "0000000060040003"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "minecraft:zombie"
+					id: "0000000060040001"
+					type: "kill"
+					value: 144L
+				}
+				{
+					entity: "minecraft:enderman"
+					id: "0000000060040002"
+					type: "kill"
+					value: 144L
+				}
+			]
+			title: "Vague de Choc"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000060040000"]
+			description: ["Les boss légendaires vous attendent. Prouvez que vous êtes au-dessus de tous."]
+			id: "0000000060050000"
+			rewards: [
+				{
+					count: 2
+					id: "0000000060050004"
+					item: "minecraft:netherite_scrap"
+					type: "item"
+				}
+				{
+					id: "0000000060050005"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					entity: "cataclysm:ender_golem"
+					id: "0000000060050001"
+					type: "kill"
+					value: 2L
+				}
+				{
+					entity: "cataclysm:ignited_revenant"
+					id: "0000000060050002"
+					type: "kill"
+					value: 2L
+				}
+				{
+					entity: "mowziesmobs:barako"
+					id: "0000000060050003"
+					type: "kill"
+					value: 2L
+				}
+			]
+			title: "Panthéon des Boss"
+			x: 16.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000060050000"]
+			description: ["Trente-deux morceaux de netherite extraits des couches les plus profondes."]
+			id: "0000000060060000"
+			rewards: [{
+				count: 2
+				id: "0000000060060002"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "0000000060060001"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			title: "Débris des Abysses"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000060060000"]
+			description: ["L'armure netherite complète est votre droit. Portez-la avec fierté."]
+			id: "0000000060070000"
+			rewards: [{
+				id: "0000000060070005"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "0000000060070001"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0000000060070002"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0000000060070003"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0000000060070004"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Armure de Monarque"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000060070000"]
+			description: ["L'expérience accumulée, cristallisée dans des flacons précieux."]
+			id: "0000000060080000"
+			rewards: [{
+				count: 16
+				id: "0000000060080002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "0000000060080001"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			title: "Bouteilles d'Expérience"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000060080000"]
+			description: ["Un trésor de netherite digne d'un roi. Seize lingots, forges pour l'éternité."]
+			id: "0000000060090000"
+			rewards: [{
+				count: 4
+				id: "0000000060090002"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "0000000060090001"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			title: "Seize Lingots de Netherite"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000060090000"]
+			description: ["La Nether Star, arrachée au Wither. Son pouvoir dépasse l'entendement."]
+			id: "00000000600A0000"
+			rewards: [
+				{
+					count: 2
+					id: "00000000600A0002"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+				{
+					id: "00000000600A0003"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "00000000600A0001"
+				item: "minecraft:nether_star"
+				type: "item"
+			}]
+			title: "Étoile du Néant"
+			x: 16.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000600A0000"]
+			description: ["Quarante Ancient Debris, extraits des profondeurs les plus inaccessibles."]
+			id: "00000000600B0000"
+			rewards: [{
+				count: 4
+				id: "00000000600B0002"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [{
+				count: 40L
+				id: "00000000600B0001"
+				item: "minecraft:ancient_debris"
+				type: "item"
+			}]
+			title: "Fouilles des Abysses"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000600B0000"]
+			description: ["Soixante-quatre perles de l'End : un stock pour affronter l'infini."]
+			id: "00000000600C0000"
+			rewards: [{
+				count: 16
+				id: "00000000600C0002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "00000000600C0001"
+				item: "minecraft:ender_pearl"
+				type: "item"
+			}]
+			title: "Perles de l'Éternité"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000600C0000"]
+			description: ["Trente-deux larmes de Ghast. L'alchimiste du Monarque en a besoin."]
+			id: "00000000600D0000"
+			rewards: [{
+				count: 4
+				id: "00000000600D0002"
+				item: "minecraft:potion"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000600D0001"
+				item: "minecraft:ghast_tear"
+				type: "item"
+			}]
+			title: "Larmes de la Fin"
+			x: 8.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000600D0000"]
+			description: ["Soixante-quatre tiges de Blaze. Le feu au service du Monarque."]
+			id: "00000000600E0000"
+			rewards: [{
+				count: 16
+				id: "00000000600E0002"
+				item: "minecraft:blaze_powder"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "00000000600E0001"
+				item: "minecraft:blaze_rod"
+				type: "item"
+			}]
+			title: "Arsenal de Blazes Suprême"
+			x: 12.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000600E0000"]
+			description: ["Vous avez tout surmonté. Chaque rang, chaque boss, chaque épreuve. Vous êtes le Monarque."]
+			id: "00000000600F0000"
+			rewards: [
+				{
+					count: 3
+					id: "00000000600F0002"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+				{
+					id: "00000000600F0003"
+					type: "xp"
+					xp: 1000
+				}
+			]
+			tasks: [{
+				count: 8L
+				id: "00000000600F0001"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			title: "Ascension au Trône"
+			x: 16.0d
+			y: 8.0d
+		}
+		{
+			description: ["Complétez 5 portails de Rang S. Votre légende est gravée dans l'histoire."]
+			id: "00000000A6000000"
+			rewards: [{
+				count: 35
+				id: "00000000A6000002"
+				item: "sologates:platinum_coin"
+				type: "item"
+			}]
+			tasks: [{
+				advancement: "sologates:portal_s_5"
+				criterion: ""
+				id: "00000000A6000001"
+				type: "advancement"
+			}]
+			title: "§4Monarque des Portails S"
+			x: 22.0d
+			y: 4.0d
+		}
+	]
+	title: "§4Rang S+ — Monarque"
+}

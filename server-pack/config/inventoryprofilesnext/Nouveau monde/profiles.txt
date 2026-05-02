@@ -1,0 +1,28 @@
+
+
+
+
+profile Saved activate HOT5
+	HOT1
+		"sologates:rank_s_leggings"
+	HOT2
+		"sologates:rank_s_boots"
+	HOT3
+		"sologates:rank_s_chestplate"
+	HOT4
+		"sologates:rank_s_helmet"
+	HOT5
+		"cataclysm:astrape"
+	HOT6
+		"cataclysm:tidal_claws"
+	HOT7
+		"minecraft:enchanted_book"
+	HOT8
+		"minecraft:enchanted_book"
+	HOT9
+		"minecraft:enchanted_book"
+	HEAD
+		"cataclysm:cursium_helmet"
+	FEET
+		"cataclysm:ignitium_boots"
+

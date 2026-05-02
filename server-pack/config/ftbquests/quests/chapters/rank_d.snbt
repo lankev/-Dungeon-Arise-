@@ -1,0 +1,400 @@
+﻿{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "rank_d"
+	group: ""
+	icon: {
+		Count: 1
+		id: "minecraft:iron_sword"
+		tag: {
+			Damage: 0
+		}
+	}
+	id: "00000000D0000000"
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["00000000E00F0000"]
+			description: ["Un chasseur se forge dans le combat. Éliminez vos premiers ennemis."]
+			id: "00000000D0010000"
+			rewards: [
+				{
+					count: 8
+					id: "00000000D0010003"
+					item: "minecraft:gold_ingot"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "00000000D0010004"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					entity: "minecraft:zombie"
+					id: "00000000D0010001"
+					type: "kill"
+					value: 52L
+				}
+				{
+					entity: "minecraft:skeleton"
+					id: "00000000D0010002"
+					type: "kill"
+					value: 46L
+				}
+			]
+			title: "Carnage Débutant"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000D0010000"]
+			description: ["Les Creepers sont imprévisibles. Apprenez à les anticiper."]
+			id: "00000000D0020000"
+			rewards: [{
+				count: 16
+				id: "00000000D0020002"
+				item: "minecraft:gunpowder"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:creeper"
+				id: "00000000D0020001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Démolisseur d'Explosifs"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000D0020000"]
+			description: ["Les zombies reviennent la nuit. Nettoyez-les encore et encore."]
+			id: "00000000D0030000"
+			rewards: [{
+				count: 8
+				id: "00000000D0030002"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "00000000D0030001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Purge des Morts-Vivants"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000D0030000"]
+			description: ["Retournez les flèches des squelettes contre d'autres ennemis."]
+			id: "00000000D0040000"
+			rewards: [{
+				count: 16
+				id: "00000000D0040002"
+				item: "minecraft:arrow"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:skeleton"
+				id: "00000000D0040001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Pluie de Flèches"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000D0040000"]
+			description: ["Un bouclier bien tenu vaut mieux que dix épées mal brandies."]
+			id: "00000000D0050000"
+			rewards: [{
+				count: 8
+				id: "00000000D0050002"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				id: "00000000D0050001"
+				item: {
+					Count: 1
+					id: "minecraft:shield"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Défenseur du Village"
+			x: 16.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000D0050000"]
+			description: ["Le cuir se vend bien dans les villages. Accumulez-en."]
+			id: "00000000D0060000"
+			rewards: [{
+				count: 8
+				id: "00000000D0060002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "00000000D0060001"
+				item: "minecraft:leather"
+				type: "item"
+			}]
+			title: "Marchand de Cuir"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000D0060000"]
+			description: ["Constituer des réserves de fer, c'est préparer l'avenir."]
+			id: "00000000D0070000"
+			rewards: [{
+				count: 16
+				id: "00000000D0070002"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "00000000D0070001"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			title: "Entrepôt de Fer"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000D0070000"]
+			description: ["L'or ne se trouve pas seul. Il se gagne par la sueur et le combat."]
+			id: "00000000D0080000"
+			rewards: [{
+				count: 8
+				id: "00000000D0080002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000D0080001"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			title: "Trésor d'Or"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000D0080000"]
+			description: ["Les os des squelettes font d'excellents engrais."]
+			id: "00000000D0090000"
+			rewards: [
+				{
+					count: 4
+					id: "00000000D0090002"
+					item: "minecraft:slime_ball"
+					type: "item"
+				}
+				{
+					id: "561535E510D3C556"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 16L
+				id: "00000000D0090001"
+				item: "minecraft:bone"
+				type: "item"
+			}]
+			title: "Collecteur d'Os"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000D0090000"]
+			description: ["Le Ravageur est la terreur des villages. Sa chute marque votre ascension."]
+			id: "00000000D00A0000"
+			rewards: [
+				{
+					count: 16
+					id: "00000000D00A0002"
+					item: "minecraft:emerald"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "00000000D00A0003"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:ravager"
+				id: "00000000D00A0001"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Bête de Guerre Vaincue"
+			x: 16.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000D00A0000"]
+			description: ["Les pillards terrorisent les villages. Mettez fin à leurs raids."]
+			id: "00000000D00B0000"
+			rewards: [
+				{
+					count: 8
+					id: "00000000D00B0002"
+					item: "minecraft:emerald"
+					type: "item"
+				}
+				{
+					id: "47D286D18F57ABD2"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:pillager"
+				id: "00000000D00B0001"
+				type: "kill"
+				value: 21L
+			}]
+			title: "Pillard Abattu"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000D00B0000"]
+			description: ["Ces guerriers armés de haches sont des adversaires redoutables."]
+			id: "00000000D00C0000"
+			rewards: [{
+				count: 8
+				id: "00000000D00C0002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:vindicator"
+				id: "00000000D00C0001"
+				type: "kill"
+				value: 12L
+			}]
+			title: "Vindicateur Terrassé"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000D00C0000"]
+			description: ["Même les déchets des zombies ont de la valeur."]
+			id: "00000000D00D0000"
+			rewards: [{
+				count: 8
+				id: "00000000D00D0002"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000D00D0001"
+				item: "minecraft:rotten_flesh"
+				type: "item"
+			}]
+			title: "Chair Pourrie Rentabilisée"
+			x: 8.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000D00D0000"]
+			description: ["Les fils d'araignée servent à confectionner arcs et cordes."]
+			id: "00000000D00E0000"
+			rewards: [{
+				count: 16
+				id: "00000000D00E0002"
+				item: "minecraft:arrow"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000D00E0001"
+				item: "minecraft:string"
+				type: "item"
+			}]
+			title: "Récolte de Toiles"
+			x: 12.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000D00E0000"]
+			description: ["Protégez votre tête. Un chasseur mort est un chasseur inutile."]
+			id: "00000000D00F0000"
+			rewards: [
+				{
+					count: 8
+					id: "00000000D00F0002"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "00000000D00F0003"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1E4BCA0DEDE0D1CC"
+					table_id: 2632077054713896L
+					type: "all_table"
+				}
+			]
+			tasks: [{
+				id: "00000000D00F0001"
+				item: {
+					Count: 1
+					id: "minecraft:iron_helmet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Casque du Chasseur"
+			x: 16.0d
+			y: 8.0d
+		}
+		{
+			description: ["Complétez 30 portails de Rang E pour forger votre expérience de chasseur."]
+			id: "3F54A3A711678E1C"
+			rewards: [{
+				count: 20
+				id: "00000000A0000002"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			tasks: [{
+				advancement: "sologates:portal_e_30"
+				criterion: ""
+				id: "00000000A0000001"
+				type: "advancement"
+			}]
+			title: "§bChasseur Endurci"
+			x: 22.0d
+			y: 4.0d
+		}
+	]
+	title: "§bRang D — Chasseur"
+}

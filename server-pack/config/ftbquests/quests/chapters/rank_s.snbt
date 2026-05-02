@@ -1,0 +1,443 @@
+﻿{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "rank_s"
+	group: ""
+	icon: {
+		Count: 1
+		id: "minecraft:netherite_sword"
+		tag: {
+			Damage: 0
+		}
+	}
+	id: "0000000050000000"
+	order_index: 6
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["00000000A00F0000"]
+			description: ["Huit cents ennemis. Le nombre qui sépare un chasseur d'un élite."]
+			id: "0000000050010000"
+			rewards: [
+				{
+					count: 48
+					id: "0000000050010004"
+					item: "minecraft:emerald"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "0000000050010005"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					entity: "minecraft:zombie"
+					id: "0000000050010001"
+					type: "kill"
+					value: 345L
+				}
+				{
+					entity: "minecraft:enderman"
+					id: "0000000050010002"
+					type: "kill"
+					value: 288L
+				}
+				{
+					entity: "minecraft:blaze"
+					id: "0000000050010003"
+					type: "kill"
+					value: 288L
+				}
+			]
+			title: "Massacre d'Élite"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000050010000"]
+			description: ["Les Endermen ne vous font plus peur. Leur regard ne vous trouble plus."]
+			id: "0000000050020000"
+			rewards: [{
+				count: 32
+				id: "0000000050020002"
+				item: "minecraft:ender_pearl"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:enderman"
+				id: "0000000050020001"
+				type: "kill"
+				value: 81L
+			}]
+			title: "Maîtrise de l'End"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000050020000"]
+			description: ["Cinquante Blazes terrassés. Les forteresses du Nether tremblent."]
+			id: "0000000050030000"
+			rewards: [{
+				count: 32
+				id: "0000000050030002"
+				item: "minecraft:blaze_rod"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:blaze"
+				id: "0000000050030001"
+				type: "kill"
+				value: 58L
+			}]
+			title: "Brasier Intarissable"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000050030000"]
+			description: ["La Netherite Monstrosity de la Cataclysm est un titan forgé dans le métal le plus dur. Sa victoire est légendaire."]
+			id: "0000000050040000"
+			rewards: [
+				{
+					count: 2
+					id: "0000000050040002"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+				{
+					id: "0000000050040003"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "cataclysm:netherite_monstrosity"
+				id: "0000000050040001"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Monstruosité de Netherite Vaincue"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000050040000"]
+			description: ["Les boss légendaires des mods gardent leurs trésors. Prouvez votre supériorité."]
+			id: "0000000050050000"
+			rewards: [{
+				count: 2
+				id: "0000000050050003"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "mowziesmobs:frostmaw"
+					id: "0000000050050001"
+					type: "kill"
+					value: 2L
+				}
+				{
+					entity: "mowziesmobs:ferrous_wroughtnaut"
+					id: "0000000050050002"
+					type: "kill"
+					value: 2L
+				}
+			]
+			title: "Chasseur de Légendes"
+			x: 16.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000050050000"]
+			description: ["Les Ancient Debris, trésors enfouis dans les profondeurs du Nether."]
+			id: "0000000050060000"
+			rewards: [{
+				count: 2
+				id: "0000000050060002"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "0000000050060001"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			title: "Débris Anciens Récupérés"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000050060000"]
+			description: ["L'armure netherite complète, enchantée ou non. Le summum de la protection."]
+			id: "0000000050070000"
+			rewards: [
+				{
+					id: "0000000050070005"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+				{
+					id: "0000000050070006"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					id: "0000000050070001"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0000000050070002"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0000000050070003"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0000000050070004"
+					item: {
+						Count: 1
+						id: "minecraft:netherite_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Armure Absolue de Netherite"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000050070000"]
+			description: ["Soixante-quatre baguettes de Blaze. Un arsenal de potions en attente."]
+			id: "0000000050080000"
+			rewards: [{
+				count: 16
+				id: "0000000050080002"
+				item: "minecraft:blaze_powder"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "0000000050080001"
+				item: "minecraft:blaze_rod"
+				type: "item"
+			}]
+			title: "Arsenal de Flammes"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000050080000"]
+			description: ["Cent cinquante ennemis en raz-de-marée. Ne faiblissez pas."]
+			id: "0000000050090000"
+			rewards: [{
+				count: 16
+				id: "0000000050090003"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "minecraft:zombie"
+					id: "0000000050090001"
+					type: "kill"
+					value: 86L
+				}
+				{
+					entity: "minecraft:skeleton"
+					id: "0000000050090002"
+					type: "kill"
+					value: 86L
+				}
+			]
+			title: "Purge des Revenants"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000050090000"]
+			description: ["Huit lingots forgés, la réserve d'un forgeron de légende."]
+			id: "00000000500A0000"
+			rewards: [{
+				count: 2
+				id: "00000000500A0002"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "00000000500A0001"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			title: "Neuf Lingots de Netherite"
+			x: 16.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000500A0000"]
+			description: ["Trente-deux Ancient Debris extraits des profondeurs les plus sombres."]
+			id: "00000000500B0000"
+			rewards: [{
+				count: 2
+				id: "00000000500B0002"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000500B0001"
+				item: "minecraft:ancient_debris"
+				type: "item"
+			}]
+			title: "Mines des Abysses"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000500B0000"]
+			description: ["Trente squelettes withers terrassés. Leurs crânes servent d'invocations."]
+			id: "00000000500C0000"
+			rewards: [{
+				count: 8
+				id: "00000000500C0002"
+				item: "minecraft:coal_block"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:wither_skeleton"
+				id: "00000000500C0001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Os de Wither Collectés"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000500C0000"]
+			description: ["Trente-deux larmes de Ghast pour les potions de régénération les plus puissantes."]
+			id: "00000000500D0000"
+			rewards: [{
+				count: 4
+				id: "00000000500D0002"
+				item: "minecraft:potion"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000500D0001"
+				item: "minecraft:ghast_tear"
+				type: "item"
+			}]
+			title: "Larmes Spectrales"
+			x: 8.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000500D0000"]
+			description: ["Dix Évocateurs vaincus. Leurs totems vous accordent une seconde vie."]
+			id: "00000000500E0000"
+			rewards: [{
+				id: "00000000500E0002"
+				item: "minecraft:totem_of_undying"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:evoker"
+				id: "00000000500E0001"
+				type: "kill"
+				value: 12L
+			}]
+			title: "Victoire sur la Mort"
+			x: 12.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000500E0000"]
+			description: ["Vous avez atteint le sommet. L'élite du monde Solo Gates vous reconnaît."]
+			id: "00000000500F0000"
+			rewards: [
+				{
+					count: 16
+					id: "00000000500F0002"
+					item: "minecraft:emerald"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000500F0003"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 64L
+				id: "00000000500F0001"
+				item: "minecraft:ender_pearl"
+				type: "item"
+			}]
+			title: "Chasseur d'Élite"
+			x: 16.0d
+			y: 8.0d
+		}
+		{
+			description: ["Complétez 3 portails de Rang S. Bienvenue dans l'élite des chasseurs."]
+			id: "00000000A5000000"
+			rewards: [
+				{
+					count: 25
+					id: "00000000A5000002"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+				{
+					id: "00000000A5000003"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				advancement: "sologates:portal_s_3"
+				criterion: ""
+				id: "00000000A5000001"
+				type: "advancement"
+			}]
+			title: "§cVétéran des Portails S"
+			x: 22.0d
+			y: 4.0d
+		}
+	]
+	title: "§cRang S — Élite"
+}

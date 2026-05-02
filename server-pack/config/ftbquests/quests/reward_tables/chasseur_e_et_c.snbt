@@ -1,0 +1,44 @@
+{
+	id: "000959DC31DE2028"
+	loot_size: 1
+	order_index: 0
+	rewards: [
+		{
+			item: {
+				Count: 1
+				id: "minecraft:diamond_sword"
+				tag: {
+					Damage: 0
+				}
+			}
+		}
+		{
+			item: {
+				Count: 1
+				id: "better_weaponry:diamond_shuriken"
+				tag: {
+					Damage: 0
+				}
+			}
+		}
+		{
+			item: {
+				Count: 1
+				id: "simplyswords:diamond_warglaive"
+				tag: {
+					Damage: 0
+				}
+			}
+		}
+		{
+			item: {
+				Count: 1
+				id: "better_weaponry:diamond_cutlass"
+				tag: {
+					Damage: 0
+				}
+			}
+		}
+	]
+	title: "chasseur e et c"
+}

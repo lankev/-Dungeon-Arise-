@@ -1,0 +1,540 @@
+{
+	default_hide_dependency_lines: true
+	default_quest_shape: "diamond"
+	filename: "boutique"
+	group: ""
+	icon: "sologates:gold_coin"
+	id: "0000000070000000"
+	order_index: 8
+	quest_links: [ ]
+	quests: [
+		{
+			can_repeat: true
+			description: [
+				"Achetez de la nourriture pour tenir le coup."
+				""
+				"§ePrix : 1 Pièce de Bronze"
+			]
+			id: "0000000070010000"
+			rewards: [{
+				count: 16
+				id: "0000000070010002"
+				item: "minecraft:cooked_beef"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "0000000070010001"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			title: "§8[Bronze] Ravitaillement"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"Un stock de flèches pour ne jamais manquer de munitions."
+				""
+				"§ePrix : 2 Pièces de Bronze"
+			]
+			id: "0000000070020000"
+			rewards: [{
+				count: 64
+				id: "0000000070020002"
+				item: "minecraft:arrow"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0000000070020001"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			title: "§8[Bronze] Munitions"
+			x: 3.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"Torches pour illuminer les cavernes les plus sombres."
+				""
+				"§ePrix : 1 Pièce de Bronze"
+			]
+			id: "0000000070030000"
+			rewards: [{
+				count: 64
+				id: "0000000070030002"
+				item: "minecraft:torch"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "0000000070030001"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			title: "§8[Bronze] Éclairage"
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"Des lingots de fer pour forger armes et armures."
+				""
+				"§ePrix : 2 Pièces de Bronze"
+			]
+			id: "0000000070040000"
+			rewards: [{
+				id: "66AC1D3E5D5C1545"
+				item: "minecraft:leather"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0000000070040001"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			title: "§8[Bronze] Cuir"
+			x: 9.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"Un plastron de chasseur de rang E. Premier équipement du portail."
+				""
+				"§ePrix : 3 Pièces de Bronze"
+			]
+			id: "0000000070050000"
+			rewards: [{
+				count: 3
+				id: "3D4BE1618C3C991E"
+				item: "minecraft:white_concrete_powder"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 3L
+				id: "0000000070050001"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			title: "§8[Bronze] Un matelas ?."
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000E00F0000"]
+			description: [
+				"De l'or pur, monnaie universelle."
+				""
+				"§ePrix : 1 Pièce d'Argent"
+				"§7Requis : Rang E terminé"
+			]
+			id: "0000000070060000"
+			rewards: [{
+				count: 16
+				id: "0000000070060002"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "0000000070060001"
+				item: "sologates:silver_coin"
+				type: "item"
+			}]
+			title: "§7[Argent] Lingots d'Or"
+			x: 0.0d
+			y: 3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000E00F0000"]
+			description: [
+				"Des diamants de haute qualité, indispensables à l'équipement."
+				""
+				"§ePrix : 2 Pièces d'Argent"
+				"§7Requis : Rang E terminé"
+			]
+			id: "0000000070070000"
+			rewards: [{
+				id: "0000000070070002"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0000000070070001"
+				item: "sologates:silver_coin"
+				type: "item"
+			}]
+			title: "§7[Argent] Diamants"
+			x: 3.0d
+			y: 3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000E00F0000"]
+			description: [
+				"Les émeraudes s'échangent partout dans le monde."
+				""
+				"§ePrix : 1 Pièce d'Argent"
+				"§7Requis : Rang E terminé"
+			]
+			id: "0000000070080000"
+			rewards: [{
+				count: 8
+				id: "0000000070080002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "0000000070080001"
+				item: "sologates:silver_coin"
+				type: "item"
+			}]
+			title: "§7[Argent] Émeraudes"
+			x: 6.0d
+			y: 3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000E00F0000"]
+			description: [
+				"Une réserve de soin pour les combats difficiles."
+				""
+				"§ePrix : 1 Pièce d'Argent"
+				"§7Requis : Rang E terminé"
+			]
+			id: "0000000070090000"
+			rewards: [{
+				id: "1B5E97989F6CEB54"
+				item: {
+					Count: 1
+					id: "minecraft:potion"
+					tag: {
+						Potion: "minecraft:swiftness"
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "0000000070090001"
+				item: "sologates:silver_coin"
+				type: "item"
+			}]
+			title: "§7[Argen] Flash"
+			x: 9.0d
+			y: 3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000E00F0000"]
+			description: [
+				"Plastron de chasseur de rang C. Solide et enchantable."
+				""
+				"§ePrix : 2 Pièces d'Argent"
+				"§7Requis : Rang E terminé"
+			]
+			id: "00000000700A0000"
+			rewards: [{
+				count: 16
+				id: "08748CDBCD4B33A2"
+				item: "minecraft:paper"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "00000000700A0001"
+				item: "sologates:silver_coin"
+				type: "item"
+			}]
+			title: "§7[Argent] Je sais pas ecrire"
+			x: 12.0d
+			y: 3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000C00F0000"]
+			description: [
+				"Le métal le plus résistant du monde."
+				""
+				"§ePrix : 1 Pièce d'Or"
+				"§6Requis : Rang C terminé"
+			]
+			id: "00000000700B0000"
+			rewards: [{
+				id: "00000000700B0002"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 15L
+				id: "00000000700B0001"
+				item: "sologates:gold_coin"
+				type: "item"
+			}]
+			title: "§6[Or] Lingot de Netherite"
+			x: 0.0d
+			y: 6.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000C00F0000"]
+			description: [
+				"Des débris anciens, matière première de la netherite."
+				""
+				"§ePrix : 2 Pièces d'Or"
+				"§6Requis : Rang C terminé"
+			]
+			id: "00000000700C0000"
+			rewards: [{
+				count: 2
+				id: "25F746320DD6A4B7"
+				item: {
+					Count: 1
+					id: "minecraft:splash_potion"
+					tag: {
+						Potion: "minecraft:fire_resistance"
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "00000000700C0001"
+				item: "sologates:gold_coin"
+				type: "item"
+			}]
+			title: "§6[Or] Ancient Debris"
+			x: 3.0d
+			y: 6.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000C00F0000"]
+			description: [
+				"Une seconde vie. Ne partez jamais au combat sans lui."
+				""
+				"§ePrix : 3 Pièces d'Or"
+				"§6Requis : Rang C terminé"
+			]
+			id: "00000000700D0000"
+			rewards: [{
+				id: "00000000700D0002"
+				item: "minecraft:totem_of_undying"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 50L
+				id: "00000000700D0001"
+				item: "sologates:gold_coin"
+				type: "item"
+			}]
+			title: "§6[Or] Totem de l'Immortalité"
+			x: 6.0d
+			y: 6.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000C00F0000"]
+			description: [
+				"De l'expérience condensée pour enchanter vos équipements."
+				""
+				"§ePrix : 1 Pièce d'Or"
+				"§6Requis : Rang C terminé"
+			]
+			id: "00000000700E0000"
+			rewards: [{
+				count: 16
+				id: "00000000700E0002"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "00000000700E0001"
+				item: "sologates:gold_coin"
+				type: "item"
+			}]
+			title: "§6[Or] Bouteilles d'XP"
+			x: 9.0d
+			y: 6.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000C00F0000"]
+			description: [
+				"Plastron de chasseur de rang B. L'armure des combattants confirmés."
+				""
+				"§ePrix : 2 Pièces d'Or"
+				"§6Requis : Rang C terminé"
+			]
+			id: "00000000700F0000"
+			rewards: [{
+				id: "348D2EBA5A43D159"
+				item: "minecraft:ender_chest"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "00000000700F0001"
+				item: "sologates:gold_coin"
+				type: "item"
+			}]
+			title: "§6[Or] super coffre"
+			x: 12.0d
+			y: 6.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000500F0000"]
+			description: [
+				"L'équipement complet de rang A : casque, plastron, jambières, bottes."
+				""
+				"§ePrix : 2 Pièces de Platine"
+				"§dRequis : Rang S terminé"
+			]
+			id: "0000000070100000"
+			rewards: [{
+				id: "1773347C3510495B"
+				item: "scalinghealth:heart_crystal"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0000000070100001"
+				item: "sologates:platinum_coin"
+				type: "item"
+			}]
+			title: "§d[Platine] coeur sur toi"
+			x: 0.0d
+			y: 9.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000500F0000"]
+			description: [
+				"L'équipement légendaire des chasseurs d'élite."
+				"Réservé aux plus dignes."
+				""
+				"§ePrix : 3 Pièces de Platine"
+				"§dRequis : Rang S terminé"
+			]
+			id: "0000000070110000"
+			rewards: [{
+				id: "4D1E5DCF9175928F"
+				item: "scalinghealth:power_crystal"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 3L
+				id: "0000000070110001"
+				item: "sologates:platinum_coin"
+				type: "item"
+			}]
+			title: "§d[Platine] Pourquoi ?"
+			x: 3.0d
+			y: 9.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000500F0000"]
+			description: [
+				"La Nether Star, symbole de puissance absolue."
+				""
+				"§ePrix : 3 Pièces de Platine"
+				"§dRequis : Rang S terminé"
+			]
+			id: "0000000070120000"
+			rewards: [{
+				id: "0000000070120002"
+				item: "minecraft:nether_star"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 3L
+				id: "0000000070120001"
+				item: "sologates:platinum_coin"
+				type: "item"
+			}]
+			title: "§d[Platine] Étoile du Néant"
+			x: 6.0d
+			y: 9.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000500F0000"]
+			description: [
+				"Quatre lingots de netherite pour forger le meilleur équipement."
+				""
+				"§ePrix : 2 Pièces de Platine"
+				"§dRequis : Rang S terminé"
+			]
+			id: "0000000070130000"
+			rewards: [{
+				count: 4
+				id: "0000000070130002"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0000000070130001"
+				item: "sologates:platinum_coin"
+				type: "item"
+			}]
+			title: "§d[Platine] Lingots de Netherite x4"
+			x: 9.0d
+			y: 9.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["00000000500F0000"]
+			description: [
+				"Trente-deux bouteilles d'XP pour des enchantements de haut niveau."
+				""
+				"§ePrix : 1 Pièce de Platine"
+				"§dRequis : Rang S terminé"
+			]
+			id: "0000000070140000"
+			rewards: [{
+				count: 32
+				id: "0000000070140002"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "0000000070140001"
+				item: "sologates:platinum_coin"
+				type: "item"
+			}]
+			title: "§d[Platine] Élixir d'Expérience"
+			x: 12.0d
+			y: 9.0d
+		}
+	]
+	title: "§eBoutique du Chasseur"
+}

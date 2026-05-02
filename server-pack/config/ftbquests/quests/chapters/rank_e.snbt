@@ -1,0 +1,398 @@
+﻿{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "rank_e"
+	group: ""
+	icon: "minecraft:oak_log"
+	id: "00000000E0000000"
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			description: ["Récoltez votre premier bois. Tout voyage commence par un premier pas."]
+			id: "00000000E0010000"
+			rewards: [{
+				count: 8
+				id: "00000000E0010002"
+				item: "minecraft:cooked_beef"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000E0010001"
+				item: "minecraft:oak_log"
+				type: "item"
+			}]
+			title: "Bûcheron Débutant"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000E0010000"]
+			description: ["Construisez un établi, fondation de tout artisan."]
+			id: "00000000E0020000"
+			rewards: [{
+				count: 4
+				id: "00000000E0020002"
+				item: "minecraft:apple"
+				type: "item"
+			}]
+			tasks: [{
+				id: "00000000E0020001"
+				item: "minecraft:crafting_table"
+				type: "item"
+			}]
+			title: "Premier Atelier"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000E0020000"]
+			description: ["Forgez votre première pioche en pierre. La roche n'a aucun secret pour vous."]
+			id: "00000000E0030000"
+			rewards: [{
+				count: 16
+				id: "00000000E0030002"
+				item: "minecraft:torch"
+				type: "item"
+			}]
+			tasks: [{
+				id: "00000000E0030001"
+				item: {
+					Count: 1
+					id: "minecraft:stone_pickaxe"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Piocheur Novice"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000E0030000"]
+			description: ["Une épée en pierre, première arme d'un futur chasseur."]
+			id: "00000000E0040000"
+			rewards: [{
+				count: 8
+				id: "00000000E0040002"
+				item: "minecraft:cooked_beef"
+				type: "item"
+			}]
+			tasks: [{
+				id: "00000000E0040001"
+				item: {
+					Count: 1
+					id: "minecraft:stone_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Premières Armes"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000E0040000"]
+			description: ["Accumulez de la cobblestone pour renforcer votre base."]
+			id: "00000000E0050000"
+			rewards: [{
+				count: 16
+				id: "00000000E0050002"
+				item: "minecraft:coal"
+				type: "item"
+			}]
+			tasks: [{
+				count: 96L
+				id: "00000000E0050001"
+				item: "minecraft:cobblestone"
+				type: "item"
+			}]
+			title: "Récolte de Pierre"
+			x: 16.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000E0050000"]
+			description: ["Le charbon, sang de la survie, éclaire et chauffe."]
+			id: "00000000E0060000"
+			rewards: [{
+				count: 32
+				id: "00000000E0060002"
+				item: "minecraft:torch"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000E0060001"
+				item: "minecraft:coal"
+				type: "item"
+			}]
+			title: "Réserves de Charbon"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000E0060000"]
+			description: ["Illuminez les ténèbres. Aucun monstre ne se cache dans la lumière."]
+			id: "00000000E0070000"
+			rewards: [{
+				count: 16
+				id: "00000000E0070002"
+				item: "minecraft:cooked_beef"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000E0070001"
+				item: "minecraft:torch"
+				type: "item"
+			}]
+			title: "Torches pour l'Obscurité"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000E0070000"]
+			description: ["Un chasseur bien nourri est un chasseur efficace."]
+			id: "00000000E0080000"
+			rewards: [{
+				count: 4
+				id: "00000000E0080002"
+				item: "minecraft:bread"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "00000000E0080001"
+				item: "minecraft:cooked_beef"
+				type: "item"
+			}]
+			title: "Garde-Manger"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000E0080000"]
+			description: ["Les zombies infestent la nuit. Nettoyez-les sans merci."]
+			id: "00000000E0090000"
+			rewards: [
+				{
+					count: 16
+					id: "00000000E0090002"
+					item: "minecraft:rotten_flesh"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000E0090003"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000E0090004"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "00000000E0090001"
+				type: "kill"
+				value: 40L
+			}]
+			title: "Chasseur de Morts-Vivants"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000E0090000"]
+			description: ["Ces archers osseux sont dangereux. Approchez-vous avant qu'ils ne tirent."]
+			id: "00000000E00A0000"
+			rewards: [{
+				count: 16
+				id: "00000000E00A0002"
+				item: "minecraft:bone"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:skeleton"
+				id: "00000000E00A0001"
+				type: "kill"
+				value: 21L
+			}]
+			title: "Traqueur de Squelettes"
+			x: 16.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000E00A0000"]
+			description: ["Récupérez leurs fils, matière première de l'arc."]
+			id: "00000000E00B0000"
+			rewards: [{
+				count: 16
+				id: "00000000E00B0002"
+				item: "minecraft:string"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:spider"
+				id: "00000000E00B0001"
+				type: "kill"
+				value: 21L
+			}]
+			title: "Tisserand Araignée"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000E00B0000"]
+			description: ["Le fer, base de toute armure digne de ce nom."]
+			id: "00000000E00C0000"
+			rewards: [
+				{
+					count: 4
+					id: "00000000E00C0002"
+					item: "minecraft:gold_ingot"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000E00C0003"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 32L
+				id: "00000000E00C0001"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			title: "Forgeron en Herbe"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000E00C0000"]
+			description: ["Une vraie épée de fer. Vous n'êtes plus un simple survivant."]
+			id: "00000000E00D0000"
+			rewards: [
+				{
+					count: 8
+					id: "00000000E00D0002"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000E00D0003"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "00000000E00D0001"
+				item: {
+					Count: 1
+					id: "minecraft:iron_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Lame de Fer"
+			x: 8.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000E00D0000"]
+			description: ["L'armure de fer vous protège des premiers dangers."]
+			id: "00000000E00E0000"
+			rewards: [{
+				count: 16
+				id: "00000000E00E0002"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				id: "00000000E00E0001"
+				item: {
+					Count: 1
+					id: "minecraft:iron_chestplate"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Plastron de Fer"
+			x: 12.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000E00E0000"]
+			description: ["Vous maîtrisez les bases de la survie. Le vrai voyage commence maintenant."]
+			id: "00000000E00F0000"
+			rewards: [
+				{
+					count: 8
+					id: "00000000E00F0002"
+					item: "minecraft:cooked_beef"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "00000000E00F0003"
+					item: "sologates:bronze_coin"
+					type: "item"
+				}
+				{
+					id: "74153558AED2DC4F"
+					item: {
+						Count: 1
+						id: "better_weaponry:iron_katana"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "00000000E00F0001"
+				item: "minecraft:smoker"
+				type: "item"
+			}]
+			title: "Survivant Éveillé"
+			x: 16.0d
+			y: 8.0d
+		}
+		{
+			description: ["Complétez 25 portails de Rang E pour prouver votre endurance."]
+			id: "00000000A1000000"
+			rewards: [{
+				count: 10
+				id: "00000000A1000002"
+				item: "sologates:bronze_coin"
+				type: "item"
+			}]
+			tasks: [{
+				advancement: "sologates:portal_e_25"
+				criterion: ""
+				id: "00000000A1000001"
+				type: "advancement"
+			}]
+			title: "§aVétéran des Portails E"
+			x: 22.0d
+			y: 4.0d
+		}
+	]
+	title: "§aRang E — Éveil"
+}

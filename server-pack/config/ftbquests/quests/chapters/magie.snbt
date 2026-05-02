@@ -1,0 +1,601 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "magie"
+	group: ""
+	icon: "irons_spellbooks:common_spell_book"
+	id: "0000000091000000"
+	order_index: 9
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"Votre voyage dans les arts arcaniques commence ici."
+				"Obtenez votre premier grimoire pour accéder à la magie."
+			]
+			id: "0000000091010000"
+			rewards: [{
+				count: 8
+				id: "0000000091010010"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				id: "0000000091010001"
+				item: {
+					Count: 1
+					id: "irons_spellbooks:copper_spell_book"
+					tag: {
+						"irons_spellbooks:spell_container": {
+							data: [ ]
+							maxSpells: 5
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "Premier Grimoire"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000091010000"]
+			description: [
+				"L'essence arcanique est la matière première de la magie."
+				"Elle sert à fabriquer parchemins et améliorations."
+			]
+			id: "0000000091020000"
+			rewards: [{
+				count: 2
+				id: "0000000091020010"
+				item: "irons_spellbooks:common_ink"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "0000000091020001"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			title: "Essence Arcanique"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000091020000"]
+			description: [
+				"Un parchemin vierge attend d'être inscrit d'un sort."
+				"Il est la clé pour apprendre de nouvelles magies."
+				"{@pagebreak}"
+				"Faites un clic droit pour l'inscrire dans votre grimoire."
+			]
+			icon: "minecraft:paper"
+			id: "0000000091030000"
+			rewards: [{
+				count: 16
+				id: "0000000091030010"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				count: 3L
+				id: "0000000091030001"
+				item: "minecraft:paper"
+				type: "item"
+			}]
+			title: "Parchemins Vierges"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000091030000"]
+			description: [
+				"Le mana est votre carburant magique. Sans lui, aucun sort ne peut être lancé."
+				"Constituez une réserve de potions de mana."
+			]
+			icon: {
+				Count: 1
+				id: "minecraft:potion"
+				tag: {
+					Potion: "irons_spellbooks:instant_mana_one"
+				}
+			}
+			id: "0000000091040000"
+			rewards: [{
+				count: 4
+				id: "0000000091040010"
+				item: "irons_spellbooks:uncommon_ink"
+				type: "item"
+			}]
+			tasks: [{
+				count: 2L
+				id: "0000000091040001"
+				item: {
+					Count: 1
+					id: "minecraft:potion"
+					tag: {
+						Potion: "irons_spellbooks:instant_mana_one"
+					}
+				}
+				type: "item"
+			}]
+			title: "Élixir de Mana"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0000000091040000"]
+			description: [
+				"Les premiers ennemis tombent sous vos sorts."
+				"Utilisez votre grimoire et tuez 5 zombies avec la magie."
+			]
+			id: "0000000091050000"
+			rewards: [{
+				count: 16
+				id: "0000000091050010"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "0000000091050001"
+				type: "kill"
+				value: 5L
+			}]
+			title: "Baptême du Feu"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000091050000"]
+			description: [
+				"Combinez sorts offensifs et défensifs."
+				"Abattez squelettes et araignées avec la magie."
+			]
+			id: "0000000091060000"
+			rewards: [{
+				count: 2
+				id: "0000000091060010"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "minecraft:skeleton"
+					id: "0000000091060001"
+					type: "kill"
+					value: 5L
+				}
+				{
+					entity: "minecraft:spider"
+					id: "0000000091060002"
+					type: "kill"
+					value: 5L
+				}
+			]
+			title: "Sang Magique"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000091060000"]
+			description: [
+				"Un mage ne se limite pas à un seul grimoire."
+				"Possédez un grimoire commun et un grimoire peu commun."
+			]
+			id: "0000000091070000"
+			rewards: [{
+				count: 4
+				id: "0000000091070010"
+				item: "irons_spellbooks:common_ink"
+				type: "item"
+			}]
+			tasks: [{
+				id: "0000000091070001"
+				item: {
+					Count: 1
+					id: "irons_spellbooks:gold_spell_book"
+					tag: {
+						"irons_spellbooks:spell_container": {
+							data: [ ]
+							maxSpells: 8
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "Double Arsenal"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000091070000"]
+			description: [
+				"Trois parchemins vierges, prêts à recevoir la sagesse des sorts."
+				"Plus vous en avez, plus vos options sont vastes."
+			]
+			id: "0000000091080000"
+			rewards: [{
+				count: 32
+				id: "0000000091080010"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "0000000091080001"
+				item: "minecraft:paper"
+				type: "item"
+			}]
+			title: "Réserve de Parchemins"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["0000000091080000"]
+			description: [
+				"Votre grimoire commun ne vous suffit plus."
+				"Améliorez-le ou obtenez un grimoire peu commun."
+			]
+			id: "0000000091090000"
+			rewards: [{
+				count: 6
+				id: "0000000091090010"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			tasks: [{
+				id: "0000000091090001"
+				item: {
+					Count: 1
+					id: "irons_spellbooks:diamond_spell_book"
+					tag: {
+						"irons_spellbooks:spell_container": {
+							data: [ ]
+							maxSpells: 10
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "Grimoire Amélioré"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["0000000091090000"]
+			description: [
+				"Un mage sans mana est sans défense."
+				"Constituez des réserves suffisantes pour les longs combats."
+			]
+			id: "000000009109A000"
+			rewards: [{
+				count: 2
+				id: "000000009109A010"
+				item: "irons_spellbooks:rare_ink"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "000000009109A001"
+				item: {
+					Count: 1
+					id: "minecraft:potion"
+					tag: {
+						Potion: "irons_spellbooks:instant_mana_two"
+					}
+				}
+				type: "item"
+			}]
+			title: "Réserves de Mana"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["000000009109A000"]
+			description: [
+				"La magie doit être éprouvée au combat."
+				"Éliminez creepers et zombies avec vos sorts."
+			]
+			id: "00000000910B0000"
+			rewards: [{
+				count: 4
+				id: "00000000910B0010"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "minecraft:creeper"
+					id: "00000000910B0001"
+					type: "kill"
+					value: 5L
+				}
+				{
+					entity: "minecraft:zombie"
+					id: "00000000910B0002"
+					type: "kill"
+					value: 5L
+				}
+			]
+			title: "Combat Étendu"
+			x: 8.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000910B0000"]
+			description: ["Huit essences arcaniques en réserve : vous êtes prêt pour la magie avancée."]
+			id: "00000000910C0000"
+			rewards: [{
+				count: 3
+				id: "00000000910C0010"
+				item: "irons_spellbooks:uncommon_ink"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "00000000910C0001"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			title: "Arsenal Arcanique"
+			x: 12.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000910C0000"]
+			description: [
+				"Les Creepers explosent avant même de vous toucher."
+				"Votre sort à distance les élimine avant qu'ils ne déclenchent."
+			]
+			id: "00000000910D0000"
+			rewards: [{
+				count: 4
+				id: "00000000910D0010"
+				item: "irons_spellbooks:uncommon_ink"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:creeper"
+				id: "00000000910D0001"
+				type: "kill"
+				value: 5L
+			}]
+			title: "Démineur Magique"
+			x: 0.0d
+			y: 12.0d
+		}
+		{
+			dependencies: ["00000000910D0000"]
+			description: [
+				"Les squelettes ripostent de loin."
+				"Votre magie à distance les surpasse. Abattez-en dix."
+			]
+			id: "00000000910E0000"
+			rewards: [{
+				count: 32
+				id: "00000000910E0010"
+				item: "minecraft:experience_bottle"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:skeleton"
+				id: "00000000910E0001"
+				type: "kill"
+				value: 10L
+			}]
+			title: "Duel à Distance"
+			x: 4.0d
+			y: 12.0d
+		}
+		{
+			dependencies: ["00000000910E0000"]
+			description: [
+				"Les Endermen se téléportent pour esquiver vos coups."
+				"Vos sorts de zone les empêchent de fuir."
+			]
+			id: "00000000910F0000"
+			rewards: [{
+				count: 8
+				id: "00000000910F0010"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:enderman"
+				id: "00000000910F0001"
+				type: "kill"
+				value: 10L
+			}]
+			title: "Sorcier de Zone"
+			x: 8.0d
+			y: 12.0d
+		}
+		{
+			dependencies: ["00000000910F0000"]
+			description: [
+				"Les pillards et vindicateurs résistent bien à l'acier."
+				"Vos sorts contournent leur armure. Annihilez-les."
+			]
+			id: "0000000091100000"
+			rewards: [{
+				count: 64
+				id: "0000000091100010"
+				item: "minecraft:paper"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "minecraft:pillager"
+					id: "0000000091100001"
+					type: "kill"
+					value: 10L
+				}
+				{
+					entity: "minecraft:vindicator"
+					id: "0000000091100002"
+					type: "kill"
+					value: 10L
+				}
+			]
+			title: "Assaut de Zone"
+			x: 12.0d
+			y: 12.0d
+		}
+		{
+			dependencies: ["0000000091100000"]
+			description: [
+				"Le grimoire rare contient des sorts de haute puissance."
+				"Sa possession vous élève au rang de mage accompli."
+			]
+			id: "0000000091110000"
+			rewards: [{
+				count: 8
+				id: "0000000091110010"
+				item: "irons_spellbooks:arcane_essence"
+				type: "item"
+			}]
+			tasks: [{
+				id: "0000000091110001"
+				item: {
+					Count: 1
+					id: "irons_spellbooks:rotten_spell_book"
+					tag: {
+						"irons_spellbooks:spell_container": {
+							data: [ ]
+							maxSpells: 8
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "Grimoire Rare"
+			x: 0.0d
+			y: 16.0d
+		}
+		{
+			dependencies: ["0000000091110000"]
+			description: [
+				"Seize essences et quatre potions de mana."
+				"L'atelier d'un archimage commence à prendre forme."
+			]
+			id: "0000000091120000"
+			rewards: [{
+				count: 2
+				id: "0000000091120010"
+				item: "minecraft:spore_blossom"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 16L
+					id: "0000000091120001"
+					item: "irons_spellbooks:arcane_essence"
+					type: "item"
+				}
+				{
+					count: 4L
+					id: "0000000091120002"
+					item: "minecraft:honey_bottle"
+					type: "item"
+				}
+			]
+			title: "Atelier de l'Archimage"
+			x: 4.0d
+			y: 16.0d
+		}
+		{
+			dependencies: ["0000000091120000"]
+			description: [
+				"Vingt créatures abattues par la magie seule."
+				"Votre puissance est indéniable. Nettoyez le monde de ses menaces."
+			]
+			id: "0000000091130000"
+			rewards: [{
+				count: 2
+				id: "0000000091130010"
+				item: "irons_spellbooks:epic_ink"
+				type: "item"
+			}]
+			tasks: [
+				{
+					entity: "minecraft:zombie"
+					id: "0000000091130001"
+					type: "kill"
+					value: 10L
+				}
+				{
+					entity: "minecraft:skeleton"
+					id: "0000000091130002"
+					type: "kill"
+					value: 5L
+				}
+				{
+					entity: "minecraft:creeper"
+					id: "0000000091130003"
+					type: "kill"
+					value: 5L
+				}
+			]
+			title: "Grand Tournoi"
+			x: 8.0d
+			y: 16.0d
+		}
+		{
+			dependencies: ["0000000091130000"]
+			description: [
+				"Le grimoire épique est réservé aux plus grands mages."
+				"Sa possession vous proclame Archimage de ce monde."
+			]
+			id: "0000000091140000"
+			rewards: [
+				{
+					count: 16
+					id: "0000000091140010"
+					item: "irons_spellbooks:arcane_essence"
+					type: "item"
+				}
+				{
+					count: 8
+					id: "0000000091140011"
+					item: {
+						Count: 1
+						id: "irons_spellbooks:dragonskin_spell_book"
+						tag: {
+							"irons_spellbooks:spell_container": {
+								data: [ ]
+								maxSpells: 12
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 2
+					id: "0000000091140012"
+					item: "irons_spellbooks:legendary_ink"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "0000000091140001"
+				item: "minecraft:nether_star"
+				type: "item"
+			}]
+			title: "Archimage"
+			x: 12.0d
+			y: 16.0d
+		}
+	]
+	title: "Quêtes Magiques"
+}

@@ -1,0 +1,1090 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "farmers_delight"
+	group: ""
+	icon: "farmersdelight:cooking_pot"
+	id: "000000008F000000"
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			description: ["Récoltez votre premier chou. La base de tout bon potager."]
+			id: "000000008F010100"
+			rewards: [{
+				count: 4
+				id: "000000008F010110"
+				item: "farmersdelight:cabbage_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "000000008F010101"
+				item: "farmersdelight:cabbage"
+				type: "item"
+			}]
+			title: "Premier Chou"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["000000008F010100"]
+			description: ["Les tomates poussent vite au soleil. Récoltez vos premières."]
+			id: "000000008F010200"
+			rewards: [{
+				count: 4
+				id: "000000008F010210"
+				item: "farmersdelight:tomato_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "000000008F010201"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			title: "Récolte de Tomates"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["000000008F010200"]
+			description: [
+				"La planche à découper est l'outil central de Farmer's Delight."
+				"Elle permet de préparer les ingrédients pour cuisiner."
+			]
+			id: "000000008F010300"
+			rewards: [{
+				count: 16
+				id: "000000008F010310"
+				item: "farmersdelight:straw"
+				type: "item"
+			}]
+			tasks: [{
+				id: "000000008F010301"
+				item: "farmersdelight:cutting_board"
+				type: "item"
+			}]
+			title: "Planche à Découper"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["000000008F010300"]
+			description: ["Le couteau de cuisine, indispensable pour découper viandes et légumes."]
+			id: "000000008F010400"
+			rewards: [{
+				count: 4
+				id: "000000008F010410"
+				item: "farmersdelight:canvas"
+				type: "item"
+			}]
+			tasks: [{
+				id: "000000008F010401"
+				item: {
+					Count: 1
+					id: "farmersdelight:iron_knife"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Premier Couteau"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["000000008F010400"]
+			description: ["Les oignons sont la base de nombreuses recettes. Commencez votre récolte."]
+			id: "000000008F010500"
+			rewards: [{
+				count: 4
+				id: "000000008F010510"
+				item: "croptopia:greenonion_seed"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "000000008F010501"
+				item: "farmersdelight:onion"
+				type: "item"
+			}]
+			title: "Bulbes d'Oignon"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["000000008F010500"]
+			description: ["Le riz se cultive près de l'eau. Récoltez vos premiers grains."]
+			id: "000000008F010600"
+			rewards: [{
+				count: 8
+				id: "000000008F010610"
+				item: "farmersdelight:rice"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "000000008F010601"
+				item: "farmersdelight:rice"
+				type: "item"
+			}]
+			title: "Rizière Débutante"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["000000008F010600"]
+			description: ["Le blé, fondement de la cuisine. Sans farine, pas de pain."]
+			id: "000000008F010700"
+			rewards: [{
+				count: 8
+				id: "000000008F010710"
+				item: "minecraft:bread"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F010701"
+				item: "minecraft:wheat"
+				type: "item"
+			}]
+			title: "Grenier de Blé"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["000000008F010700"]
+			description: ["Carottes et pommes de terre : les classiques de tout potager."]
+			id: "000000008F010800"
+			rewards: [{
+				count: 8
+				id: "000000008F010810"
+				item: "minecraft:potato"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F010801"
+				item: "minecraft:carrot"
+				type: "item"
+			}]
+			title: "Jardin Potager"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["000000008F010800"]
+			description: [
+				"La cocotte de cuisson est le cœur de votre cuisine."
+				"Placez-la sur un feu et commencez à cuisiner."
+			]
+			id: "000000008F020100"
+			rewards: [{
+				id: "000000008F020110"
+				item: "farmersdelight:cooking_pot"
+				type: "item"
+			}]
+			tasks: [{
+				id: "000000008F020101"
+				item: "farmersdelight:cooking_pot"
+				type: "item"
+			}]
+			title: "La Cocotte"
+			x: 0.0d
+			y: 9.0d
+		}
+		{
+			dependencies: ["000000008F020100"]
+			description: ["Les bols servent à servir les soupes et ragoûts. Fabriquez-en une bonne réserve."]
+			id: "000000008F020200"
+			rewards: [{
+				count: 8
+				id: "000000008F020210"
+				item: "farmersdelight:cabbage"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F020201"
+				item: "minecraft:bowl"
+				type: "item"
+			}]
+			title: "Bols en Stock"
+			x: 4.0d
+			y: 9.0d
+		}
+		{
+			dependencies: ["000000008F020200"]
+			description: ["Votre première soupe maison. Nutritive et réconfortante."]
+			id: "000000008F020300"
+			rewards: [{
+				count: 8
+				id: "000000008F020310"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			tasks: [{
+				count: 2L
+				id: "000000008F020301"
+				item: "farmersdelight:vegetable_soup"
+				type: "item"
+			}]
+			title: "Soupe aux Légumes"
+			x: 8.0d
+			y: 9.0d
+		}
+		{
+			dependencies: ["000000008F020300"]
+			description: ["Un ragoût bien mijoté, pour les longues journées de chasse."]
+			id: "000000008F020400"
+			rewards: [{
+				count: 8
+				id: "000000008F020410"
+				item: "minecraft:beef"
+				type: "item"
+			}]
+			tasks: [{
+				count: 2L
+				id: "000000008F020401"
+				item: "farmersdelight:beef_stew"
+				type: "item"
+			}]
+			title: "Ragoût de Bœuf"
+			x: 12.0d
+			y: 9.0d
+		}
+		{
+			dependencies: ["000000008F020400"]
+			description: [
+				"Découpez le chou sur la planche pour obtenir ses feuilles."
+				"Elles entrent dans de nombreuses recettes."
+			]
+			id: "000000008F020500"
+			rewards: [{
+				count: 6
+				id: "000000008F020510"
+				item: "farmersdelight:cabbage_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F020501"
+				item: "farmersdelight:cabbage_leaf"
+				type: "item"
+			}]
+			title: "Feuilles de Chou"
+			x: 0.0d
+			y: 13.0d
+		}
+		{
+			dependencies: ["000000008F020500"]
+			description: ["Huit tomates fraîches du jardin. Vos plants poussent bien."]
+			id: "000000008F020600"
+			rewards: [{
+				count: 6
+				id: "000000008F020610"
+				item: "farmersdelight:onion"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F020601"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			title: "Récolte Abondante de Tomates"
+			x: 4.0d
+			y: 13.0d
+		}
+		{
+			dependencies: ["000000008F020600"]
+			description: ["Votre rizière produit enfin en quantité. Récoltez et stockez."]
+			id: "000000008F020700"
+			rewards: [{
+				count: 12
+				id: "000000008F020710"
+				item: "minecraft:wheat"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F020701"
+				item: "farmersdelight:rice"
+				type: "item"
+			}]
+			title: "Rizière en Plein Régime"
+			x: 8.0d
+			y: 13.0d
+		}
+		{
+			dependencies: ["000000008F020700"]
+			description: ["Un stock d'oignons solide pour les soupes et ragoûts à venir."]
+			id: "000000008F020800"
+			rewards: [{
+				count: 8
+				id: "000000008F020810"
+				item: "minecraft:carrot"
+				type: "item"
+			}]
+			tasks: [{
+				count: 8L
+				id: "000000008F020801"
+				item: "farmersdelight:onion"
+				type: "item"
+			}]
+			title: "Oignons en Réserve"
+			x: 12.0d
+			y: 13.0d
+		}
+		{
+			dependencies: ["000000008F020800"]
+			description: ["Un sandwich bien garni, parfait pour partir en expédition."]
+			id: "000000008F030100"
+			rewards: [{
+				count: 16
+				id: "000000008F030110"
+				item: "minecraft:bread"
+				type: "item"
+			}]
+			tasks: [{
+				id: "000000008F030101"
+				item: "croptopia:ham_sandwich"
+				type: "item"
+			}]
+			title: "Sandwich Maison"
+			x: 0.0d
+			y: 18.0d
+		}
+		{
+			dependencies: ["000000008F030100"]
+			description: ["Diversifiez votre cuisine : soupe aux légumes et ragoût de bœuf."]
+			id: "000000008F030200"
+			rewards: [{
+				count: 4
+				id: "000000008F030210"
+				item: "minecraft:golden_carrot"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 2L
+					id: "000000008F030201"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 2L
+					id: "000000008F030202"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+			]
+			title: "Repas Variés"
+			x: 4.0d
+			y: 18.0d
+		}
+		{
+			dependencies: ["000000008F030200"]
+			description: [
+				"Un cuisinier accompli maîtrise plusieurs recettes."
+				"Préparez quatre plats différents."
+			]
+			id: "000000008F030300"
+			rewards: [{
+				count: 12
+				id: "000000008F030310"
+				item: "farmersdelight:rice"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "000000008F030301"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					id: "000000008F030302"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+				{
+					id: "000000008F030303"
+					item: "farmersdelight:chicken_soup"
+					type: "item"
+				}
+				{
+					id: "000000008F030304"
+					item: "farmersdelight:baked_cod_stew"
+					type: "item"
+				}
+			]
+			title: "Diversité Gastronomique"
+			x: 8.0d
+			y: 18.0d
+		}
+		{
+			dependencies: ["000000008F030300"]
+			description: ["Préparez quatre portions du même plat. La répétition forge le cuisinier."]
+			id: "000000008F030400"
+			rewards: [{
+				id: "000000008F030410"
+				item: "farmersdelight:cooking_pot"
+				type: "item"
+			}]
+			tasks: [{
+				count: 4L
+				id: "000000008F030401"
+				item: "farmersdelight:beef_stew"
+				type: "item"
+			}]
+			title: "Chef en Formation"
+			x: 12.0d
+			y: 18.0d
+		}
+		{
+			dependencies: ["000000008F030400"]
+			description: ["Seize unités de nourriture Farmer's Delight. Votre cuisine tourne à plein régime."]
+			id: "000000008F030500"
+			rewards: [{
+				count: 8
+				id: "000000008F030510"
+				item: "farmersdelight:canvas"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 8L
+					id: "000000008F030501"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 8L
+					id: "000000008F030502"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+			]
+			title: "Garde-Manger Rempli"
+			x: 0.0d
+			y: 22.0d
+		}
+		{
+			dependencies: ["000000008F030500"]
+			description: ["Seize choux récoltés. Votre ferme prend de l'ampleur."]
+			id: "000000008F030600"
+			rewards: [{
+				count: 8
+				id: "000000008F030610"
+				item: "farmersdelight:cabbage_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "000000008F030601"
+				item: "farmersdelight:cabbage"
+				type: "item"
+			}]
+			title: "Plantation de Chou"
+			x: 4.0d
+			y: 22.0d
+		}
+		{
+			dependencies: ["000000008F030600"]
+			description: ["Seize tomates fraîches. Vos plans de tomates couvrent le terrain."]
+			id: "000000008F030700"
+			rewards: [{
+				count: 8
+				id: "000000008F030710"
+				item: "farmersdelight:tomato_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "000000008F030701"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			title: "Plantation de Tomates"
+			x: 8.0d
+			y: 22.0d
+		}
+		{
+			dependencies: ["000000008F030700"]
+			description: ["Seize oignons récoltés. Votre potager est désormais productif."]
+			id: "000000008F030800"
+			rewards: [{
+				count: 8
+				id: "000000008F030810"
+				item: "croptopia:onion_seed"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "000000008F030801"
+				item: "farmersdelight:onion"
+				type: "item"
+			}]
+			title: "Plantation d'Oignons"
+			x: 12.0d
+			y: 22.0d
+		}
+		{
+			dependencies: ["000000008F030800"]
+			description: ["Élargissez votre répertoire avec quatre nouvelles recettes."]
+			id: "000000008F040100"
+			rewards: [{
+				count: 8
+				id: "000000008F040110"
+				item: "farmersdelight:tomato_seeds"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "000000008F040101"
+					item: "farmersdelight:pasta_with_meatballs"
+					type: "item"
+				}
+				{
+					count: 5L
+					id: "000000008F040102"
+					item: "farmersdelight:roast_chicken"
+					type: "item"
+				}
+				{
+					id: "000000008F040103"
+					item: "farmersdelight:bacon_and_eggs"
+					type: "item"
+				}
+				{
+					id: "000000008F040104"
+					item: "farmersdelight:fish_stew"
+					type: "item"
+				}
+			]
+			title: "Maîtrise des Plats"
+			x: 0.0d
+			y: 27.0d
+		}
+		{
+			dependencies: ["000000008F040100"]
+			description: ["Seize repas prêts à servir. De quoi nourrir toute une équipe d'aventuriers."]
+			id: "000000008F040200"
+			rewards: [{
+				id: "000000008F040210"
+				item: "minecraft:golden_apple"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 8L
+					id: "000000008F040201"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 8L
+					id: "000000008F040202"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+			]
+			title: "Banquet Préparé"
+			x: 4.0d
+			y: 27.0d
+		}
+		{
+			dependencies: ["000000008F040200"]
+			description: ["Deux cocottes en fonctionnement simultané. Votre cuisine devient industrielle."]
+			id: "000000008F040300"
+			rewards: [{
+				count: 8
+				id: "000000008F040310"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			tasks: [{
+				count: 2L
+				id: "000000008F040301"
+				item: "farmersdelight:cooking_pot"
+				type: "item"
+			}]
+			title: "Double Atelier"
+			x: 8.0d
+			y: 27.0d
+		}
+		{
+			dependencies: ["000000008F040300"]
+			description: ["Un expert connaît ses ingrédients. Rassemblez dix composants différents."]
+			id: "000000008F040400"
+			rewards: [{
+				count: 16
+				id: "000000008F040410"
+				item: "farmersdelight:rice"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "000000008F040401"
+					item: "farmersdelight:cabbage"
+					type: "item"
+				}
+				{
+					id: "000000008F040402"
+					item: "farmersdelight:tomato"
+					type: "item"
+				}
+				{
+					id: "000000008F040403"
+					item: "farmersdelight:onion"
+					type: "item"
+				}
+				{
+					id: "000000008F040404"
+					item: "farmersdelight:rice"
+					type: "item"
+				}
+				{
+					id: "000000008F040405"
+					item: "farmersdelight:straw"
+					type: "item"
+				}
+				{
+					id: "000000008F040406"
+					item: "farmersdelight:cabbage_leaf"
+					type: "item"
+				}
+				{
+					id: "000000008F040407"
+					item: "minecraft:wheat"
+					type: "item"
+				}
+				{
+					id: "000000008F040408"
+					item: "minecraft:carrot"
+					type: "item"
+				}
+				{
+					id: "000000008F040409"
+					item: "minecraft:potato"
+					type: "item"
+				}
+				{
+					id: "000000008F04040A"
+					item: "minecraft:egg"
+					type: "item"
+				}
+			]
+			title: "Dix Ingrédients Maîtrisés"
+			x: 12.0d
+			y: 27.0d
+		}
+		{
+			dependencies: ["000000008F040400"]
+			description: ["Trente-deux unités de nourriture FD. Votre cuisine tourne sans arrêt."]
+			id: "000000008F040500"
+			rewards: [{
+				count: 4
+				id: "000000008F040510"
+				item: "minecraft:honey_bottle"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 16L
+					id: "000000008F040501"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F040502"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+			]
+			title: "Grande Production"
+			x: 0.0d
+			y: 31.0d
+		}
+		{
+			dependencies: ["000000008F040500"]
+			description: ["Trente-deux choux récoltés. Votre ferme est devenue une vraie exploitation."]
+			id: "000000008F040600"
+			rewards: [{
+				count: 12
+				id: "000000008F040610"
+				item: "farmersdelight:cabbage_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "000000008F040601"
+				item: "farmersdelight:cabbage"
+				type: "item"
+			}]
+			title: "Grande Ferme de Chou"
+			x: 4.0d
+			y: 31.0d
+		}
+		{
+			dependencies: ["000000008F040600"]
+			description: ["Trente-deux tomates. Vos serres débordent de rouge."]
+			id: "000000008F040700"
+			rewards: [{
+				count: 12
+				id: "000000008F040710"
+				item: "farmersdelight:tomato_seeds"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "000000008F040701"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			title: "Grande Ferme de Tomates"
+			x: 8.0d
+			y: 31.0d
+		}
+		{
+			dependencies: ["000000008F040700"]
+			description: ["Trente-deux oignons. L'odeur est forte, mais les récompenses valent le coup."]
+			id: "000000008F040800"
+			rewards: [{
+				count: 4
+				id: "000000008F040810"
+				item: "minecraft:enchanted_golden_apple"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "000000008F040801"
+				item: "farmersdelight:onion"
+				type: "item"
+			}]
+			title: "Grande Ferme d'Oignons"
+			x: 12.0d
+			y: 31.0d
+		}
+		{
+			dependencies: ["000000008F040800"]
+			description: [
+				"Un maître cuisinier ne fait pas dans la demi-mesure."
+				"Préparez six recettes différentes."
+			]
+			id: "000000008F050100"
+			rewards: [{
+				count: 8
+				id: "000000008F050110"
+				item: "minecraft:golden_carrot"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "000000008F050101"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					id: "000000008F050102"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+				{
+					id: "000000008F050103"
+					item: "farmersdelight:chicken_soup"
+					type: "item"
+				}
+				{
+					id: "000000008F050104"
+					item: "farmersdelight:fish_stew"
+					type: "item"
+				}
+				{
+					id: "000000008F050105"
+					item: "farmersdelight:pasta_with_meatballs"
+					type: "item"
+				}
+			]
+			title: "Six Plats Maîtrisés"
+			x: 0.0d
+			y: 36.0d
+		}
+		{
+			dependencies: ["000000008F050100"]
+			description: ["Trente-deux repas préparés. De quoi festoyer pendant des semaines."]
+			id: "000000008F050200"
+			rewards: [{
+				count: 2
+				id: "000000008F050210"
+				item: "minecraft:golden_apple"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 16L
+					id: "000000008F050201"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050202"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+			]
+			title: "Festin Royal"
+			x: 4.0d
+			y: 36.0d
+		}
+		{
+			dependencies: ["000000008F050200"]
+			description: ["Soixante-quatre choux. Votre ferme est une véritable usine à légumes."]
+			id: "000000008F050300"
+			rewards: [
+				{
+					count: 16
+					id: "000000008F050310"
+					item: "farmersdelight:cabbage_seeds"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "000000008F050311"
+					item: "farmersdelight:tomato_seeds"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "000000008F050312"
+					item: "mowziesmobs:foliaath_seed"
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 64L
+				id: "000000008F050301"
+				item: "farmersdelight:cabbage"
+				type: "item"
+			}]
+			title: "Récolte Massive de Chou"
+			x: 8.0d
+			y: 36.0d
+		}
+		{
+			dependencies: ["000000008F050300"]
+			description: ["Soixante-quatre tomates mûres. Vos serres débordent."]
+			id: "000000008F050400"
+			rewards: [
+				{
+					count: 16
+					id: "000000008F050410"
+					item: "farmersdelight:cabbage_seeds"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "000000008F050411"
+					item: "farmersdelight:tomato_seeds"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "000000008F050412"
+					item: "sologates:platinum_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 64L
+				id: "000000008F050401"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			title: "Récolte Massive de Tomates"
+			x: 12.0d
+			y: 36.0d
+		}
+		{
+			dependencies: ["000000008F050400"]
+			description: [
+				"Seize bols prêts, accompagnés de repas à la hauteur."
+				"Un vrai service de restaurant."
+			]
+			id: "000000008F050500"
+			rewards: [{
+				id: "000000008F050510"
+				item: "farmersdelight:cooking_pot"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 16L
+					id: "000000008F050501"
+					item: "minecraft:bowl"
+					type: "item"
+				}
+				{
+					count: 4L
+					id: "000000008F050502"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 4L
+					id: "000000008F050503"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+			]
+			title: "Festin de Bols"
+			x: 0.0d
+			y: 40.0d
+		}
+		{
+			dependencies: ["000000008F050500"]
+			description: ["Soixante-quatre portions cuisinées. La cadence d'un restaurant étoilé."]
+			id: "000000008F050600"
+			rewards: [{
+				count: 8
+				id: "000000008F050610"
+				item: "minecraft:honey_bottle"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 16L
+					id: "000000008F050601"
+					item: "farmersdelight:vegetable_soup"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050602"
+					item: "farmersdelight:beef_stew"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050603"
+					item: "farmersdelight:chicken_soup"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050604"
+					item: "farmersdelight:fish_stew"
+					type: "item"
+				}
+			]
+			title: "Cuisine en Grande Quantité"
+			x: 4.0d
+			y: 40.0d
+		}
+		{
+			dependencies: ["000000008F050600"]
+			description: [
+				"Les recettes avancées requièrent technique et ingrédients rares."
+				"Seize repas de haute cuisine."
+			]
+			id: "000000008F050700"
+			rewards: [{
+				count: 12
+				id: "000000008F050710"
+				item: "minecraft:golden_carrot"
+				type: "item"
+			}]
+			tasks: [
+				{
+					count: 4L
+					id: "000000008F050701"
+					item: "farmersdelight:pasta_with_meatballs"
+					type: "item"
+				}
+				{
+					count: 4L
+					id: "000000008F050703"
+					item: "farmersdelight:bacon_and_eggs"
+					type: "item"
+				}
+				{
+					count: 4L
+					id: "000000008F050704"
+					item: "farmersdelight:ham"
+					type: "item"
+				}
+			]
+			title: "Repas Élaborés"
+			x: 8.0d
+			y: 40.0d
+		}
+		{
+			dependencies: ["000000008F050700"]
+			description: [
+				"Soixante-quatre ingrédients de Farmer's Delight récoltés."
+				"Vous êtes le Maître Cuisinier de ce serveur."
+			]
+			id: "000000008F050800"
+			rewards: [
+				{
+					count: 4
+					id: "000000008F050810"
+					item: "minecraft:golden_apple"
+					type: "item"
+				}
+				{
+					count: 8
+					id: "000000008F050811"
+					item: "minecraft:honey_bottle"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "000000008F050812"
+					item: "farmersdelight:cabbage_seeds"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "000000008F050813"
+					item: "farmersdelight:tomato_seeds"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					count: 16L
+					id: "000000008F050801"
+					item: "farmersdelight:cabbage"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050802"
+					item: "farmersdelight:tomato"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050803"
+					item: "farmersdelight:onion"
+					type: "item"
+				}
+				{
+					count: 16L
+					id: "000000008F050804"
+					item: "farmersdelight:rice"
+					type: "item"
+				}
+			]
+			title: "Maître des Provisions"
+			x: 12.0d
+			y: 40.0d
+		}
+	]
+	title: "§aFarmer's Delight"
+}

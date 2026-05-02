@@ -1,0 +1,426 @@
+﻿{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "rank_b"
+	group: ""
+	icon: "minecraft:blaze_rod"
+	id: "00000000B0000000"
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["00000000C00F0000"]
+			description: ["Le Nether est un enfer vivant. Montrez que vous en êtes le maître."]
+			id: "00000000B0010000"
+			rewards: [
+				{
+					count: 24
+					id: "00000000B0010005"
+					item: "minecraft:emerald"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000B0010006"
+					item: "sologates:silver_coin"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					entity: "minecraft:blaze"
+					id: "00000000B0010001"
+					type: "kill"
+					value: 69L
+				}
+				{
+					entity: "minecraft:wither_skeleton"
+					id: "00000000B0010002"
+					type: "kill"
+					value: 69L
+				}
+				{
+					entity: "minecraft:magma_cube"
+					id: "00000000B0010003"
+					type: "kill"
+					value: 69L
+				}
+				{
+					entity: "minecraft:hoglin"
+					id: "00000000B0010004"
+					type: "kill"
+					value: 69L
+				}
+			]
+			title: "Bain de Sang du Nether"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000B0010000"]
+			description: ["Ces gardiens des forteresses crachent du feu. Éteignez-les."]
+			id: "00000000B0020000"
+			rewards: [{
+				count: 16
+				id: "00000000B0020002"
+				item: "minecraft:blaze_rod"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:blaze"
+				id: "00000000B0020001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Exterminateur de Blazes"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000B0020000"]
+			description: ["Ces squelettes noirs portent la malédiction du Wither."]
+			id: "00000000B0030000"
+			rewards: [{
+				count: 8
+				id: "00000000B0030002"
+				item: "minecraft:coal_block"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:wither_skeleton"
+				id: "00000000B0030001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Squelettes Withers Abattus"
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000B0030000"]
+			description: ["Ces créatures de lave rebondissent sans fin. Tranchez-les toutes."]
+			id: "00000000B0040000"
+			rewards: [{
+				count: 8
+				id: "00000000B0040002"
+				item: "minecraft:magma_cream"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:magma_cube"
+				id: "00000000B0040001"
+				type: "kill"
+				value: 35L
+			}]
+			title: "Cubes de Magma Fondus"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000B0040000"]
+			description: ["Ces sangliers du Nether fournissent de la viande précieuse."]
+			id: "00000000B0050000"
+			rewards: [{
+				count: 16
+				id: "00000000B0050002"
+				item: "minecraft:cooked_porkchop"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:hoglin"
+				id: "00000000B0050001"
+				type: "kill"
+				value: 17L
+			}]
+			title: "Chasseur de Hoglin"
+			x: 16.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["00000000B0050000"]
+			description: ["Ces tiges sont essentielles à l'alchimie et au craft avancé."]
+			id: "00000000B0060000"
+			rewards: [{
+				count: 8
+				id: "00000000B0060002"
+				item: "minecraft:blaze_powder"
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "00000000B0060001"
+				item: "minecraft:blaze_rod"
+				type: "item"
+			}]
+			title: "Réserve de Tiges de Blaze"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000B0060000"]
+			description: ["Une armure complète en diamant, prête pour les défis à venir."]
+			id: "00000000B0070000"
+			rewards: [{
+				count: 2
+				id: "00000000B0070005"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "00000000B0070001"
+					item: {
+						Count: 1
+						id: "minecraft:diamond_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "00000000B0070002"
+					item: {
+						Count: 1
+						id: "minecraft:diamond_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "00000000B0070003"
+					item: {
+						Count: 1
+						id: "minecraft:diamond_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "00000000B0070004"
+					item: {
+						Count: 1
+						id: "minecraft:diamond_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Guerrier de Diamant Complet"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000B0070000"]
+			description: ["Frostmaw, titan des glaces, garde des trésors gelés. Son souffle tue en secondes."]
+			id: "00000000B0080000"
+			rewards: [
+				{
+					id: "00000000B0080002"
+					item: "minecraft:netherite_scrap"
+					type: "item"
+				}
+				{
+					id: "00000000B0080003"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "mowziesmobs:frostmaw"
+				id: "00000000B0080001"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Géant de Glace Vaincu"
+			x: 8.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000B0080000"]
+			description: ["Ferrous Wroughtnaut, chevalier de fer indestructible. Trouvez sa faiblesse."]
+			id: "00000000B0090000"
+			rewards: [
+				{
+					id: "00000000B0090002"
+					item: "minecraft:netherite_scrap"
+					type: "item"
+				}
+				{
+					id: "00000000B0090003"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "mowziesmobs:ferrous_wroughtnaut"
+				id: "00000000B0090001"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Colosse de Fer Brisé"
+			x: 12.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000B0090000"]
+			description: ["Les Ghasts pleurent dans le Nether. Leurs larmes se transforment en trésor."]
+			id: "00000000B00A0000"
+			rewards: [{
+				count: 8
+				id: "00000000B00A0002"
+				item: "minecraft:glowstone_dust"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:ghast"
+				id: "00000000B00A0001"
+				type: "kill"
+				value: 17L
+			}]
+			title: "Spectres du Nether Exorcisés"
+			x: 16.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["00000000B00A0000"]
+			description: ["Le pupitre de brassage transforme vos ressources en potions de combat."]
+			id: "00000000B00B0000"
+			rewards: [{
+				count: 8
+				id: "00000000B00B0002"
+				item: "minecraft:blaze_powder"
+				type: "item"
+			}]
+			tasks: [{
+				id: "00000000B00B0001"
+				item: "minecraft:brewing_stand"
+				type: "item"
+			}]
+			title: "Maître Brasseur"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000B00B0000"]
+			description: ["La potion, arme secrète du chasseur. Brassez, préparez, survivez."]
+			id: "00000000B00C0000"
+			rewards: [{
+				count: 2
+				id: "00000000B00C0002"
+				item: "minecraft:potion"
+				type: "item"
+			}]
+			tasks: [{
+				count: 3L
+				id: "00000000B00C0001"
+				item: "minecraft:potion"
+				type: "item"
+			}]
+			title: "Premier Flacon Magique"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000B00C0000"]
+			description: ["Ces briques résistent au feu. Parfaites pour construire une forteresse."]
+			id: "00000000B00D0000"
+			rewards: [{
+				count: 16
+				id: "00000000B00D0002"
+				item: "minecraft:quartz"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "00000000B00D0001"
+				item: "minecraft:nether_brick"
+				type: "item"
+			}]
+			title: "Briques du Nether"
+			x: 8.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000B00D0000"]
+			description: ["Le quartz du Nether brille d'un éclat particulier."]
+			id: "00000000B00E0000"
+			rewards: [{
+				count: 8
+				id: "00000000B00E0002"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			tasks: [{
+				count: 32L
+				id: "00000000B00E0001"
+				item: "minecraft:quartz"
+				type: "item"
+			}]
+			title: "Quartz Raffiné"
+			x: 12.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["00000000B00E0000"]
+			description: ["La netherite, métal indestructible. Sa possession marque votre entrée dans l'élite."]
+			id: "00000000B00F0000"
+			rewards: [
+				{
+					count: 4
+					id: "00000000B00F0002"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "00000000B00F0003"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 2L
+				id: "00000000B00F0001"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			title: "Forgeron de Netherite"
+			x: 16.0d
+			y: 8.0d
+		}
+		{
+			description: ["Complétez 15 portails de Rang B. La puissance se gagne à la sueur du front."]
+			id: "00000000A3000000"
+			rewards: [
+				{
+					count: 10
+					id: "00000000A3000002"
+					item: "sologates:silver_coin"
+					type: "item"
+				}
+				{
+					id: "00000000A3000003"
+					item: "sologates:gold_coin"
+					type: "item"
+				}
+			]
+			tasks: [{
+				advancement: "sologates:portal_b_15"
+				criterion: ""
+				id: "00000000A3000001"
+				type: "advancement"
+			}]
+			title: "§5Vétéran des Portails B"
+			x: 22.0d
+			y: 4.0d
+		}
+	]
+	title: "§5Rang B — Puissance"
+}
