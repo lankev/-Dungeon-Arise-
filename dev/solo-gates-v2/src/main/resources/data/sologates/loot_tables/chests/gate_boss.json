@@ -1,48 +1,16 @@
 {
-  "pools": [
-    {
-      "rolls": {
-        "min": 2,
-        "max": 4,
-        "type": "minecraft:uniform"
-      },
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "item": "apotheosis:gem_dust",
-          "weight": 20,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 2,
-                "max": 5,
-                "type": "minecraft:uniform"
-              }
-            }
-          ]
-        },
-        {
-          "type": "apotheosis:random_gem",
-          "weight": 45,
-          "quality": 7
-        },
-        {
-          "type": "apotheosis:random_affix_item",
-          "weight": 30,
-          "quality": 5,
-          "rarity": "epic",
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 5
-        }
-      ]
-    }
-  ]
+  "type": "minecraft:chest",
+  "pools": [{
+    "rolls": { "type": "minecraft:uniform", "min": 3, "max": 5 },
+    "bonus_rolls": 0,
+    "entries": [
+      { "type": "minecraft:item", "weight": 15, "name": "minecraft:netherite_ingot", "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 3 } }] },
+      { "type": "minecraft:item", "weight": 14, "name": "minecraft:enchanted_book", "functions": [{ "function": "minecraft:enchant_randomly" }] },
+      { "type": "minecraft:item", "weight": 12, "name": "minecraft:totem_of_undying" },
+      { "type": "minecraft:item", "weight": 10, "name": "minecraft:enchanted_golden_apple" },
+      { "type": "minecraft:item", "weight": 8, "name": "minecraft:nether_star", "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }] },
+      { "type": "minecraft:item", "weight": 8, "name": "minecraft:netherite_upgrade_smithing_template" },
+      { "type": "minecraft:item", "weight": 5, "name": "minecraft:experience_bottle", "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 24, "max": 48 } }] }
+    ]
+  }]
 }

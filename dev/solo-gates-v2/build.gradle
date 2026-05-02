@@ -129,7 +129,18 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compileOnly files('C:/Users/matis/curseforge/minecraft/Instances/level/mods/PassiveSkillTree-1.20.1-BETA-0.7.4-all.jar')
+    def skillTreeJar = [
+        'C:/Users/towoga/curseforge/minecraft/Instances/level/mods/PassiveSkillTree-1.20.1-BETA-0.7.4-all.jar',
+        'C:/Users/towoga/AppData/Roaming/CurseForge/minecraft/Instances/level/mods/PassiveSkillTree-1.20.1-BETA-0.7.4-all.jar',
+        'libs/PassiveSkillTree-1.20.1-BETA-0.7.4-all.jar',
+        'C:/Users/matis/curseforge/minecraft/Instances/level/mods/PassiveSkillTree-1.20.1-BETA-0.7.4-all.jar',
+    ].collect { file(it) }.find { it.exists() }
+    if (skillTreeJar) {
+        compileOnly files(skillTreeJar)
+        println "[SoloGates] PassiveSkillTree trouvé : ${skillTreeJar}"
+    } else {
+        println "[SoloGates] AVERTISSEMENT : PassiveSkillTree introuvable. Copiez le JAR dans libs/ si le module CrimeStat ne compile pas."
+    }
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

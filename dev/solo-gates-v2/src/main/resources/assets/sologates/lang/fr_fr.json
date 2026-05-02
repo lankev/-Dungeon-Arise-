@@ -57,6 +57,7 @@
   "sologates.message.gate_already_started": "Cette gate a deja commence.",
   "sologates.message.gate_already_waiting": "Vous attendez deja cette gate.",
   "sologates.message.gate_player_joined": "%1$s a rejoint la gate ! (%2$s en attente)",
+  "sologates.message.gate_full": "Ce portail est complet (%1$s/%2$s joueurs).",
   "sologates.message.gate_closing_warning": "%1$s ferme dans %2$ss ! Derniere chance de rejoindre.",
   "sologates.message.gate_starting": "Gate qui demarre avec %1$s joueur(s) !",
   "sologates.message.player_died_gate": "%1$s est tombe dans le donjon ! (%2$s restants)",

@@ -53,6 +53,13 @@ public final class SoloGatesConfig {
     // Invasion
     public static final ForgeConfigSpec.IntValue INVASION_PERCENT;
 
+    // Multiplayer
+    public static final ForgeConfigSpec.IntValue ENTRY_WINDOW_SECONDS;
+    public static final ForgeConfigSpec.IntValue MAX_PLAYERS_PER_GATE;
+    public static final ForgeConfigSpec.BooleanValue ENFORCE_RANK_REQUIREMENT;
+    public static final ForgeConfigSpec.DoubleValue LIFETIME_PLAYER_SCALE;
+    public static final ForgeConfigSpec.IntValue COMPLETION_CHEST_LIFETIME_SECONDS;
+
     private static ForgeConfigSpec.ConfigValue<List<? extends String>> mobList(
             ForgeConfigSpec.Builder builder, String name, List<String> defaults) {
         return builder.comment("Ids d'entites possibles pour ce rang.")
@@ -128,6 +135,14 @@ public final class SoloGatesConfig {
         MOB_HP_MULT_A = builder.comment("Multiplicateur de PV des mobs rang A.").defineInRange("mobHpMultA", 3.4, 0.1, 20.0);
         MOB_HP_MULT_S = builder.comment("Multiplicateur de PV des mobs rang S.").defineInRange("mobHpMultS", 5.95, 0.1, 20.0);
         INVASION_PERCENT = builder.comment("Pourcentage des mobs restants qui envahissent l'Overworld si echec (0-100).").defineInRange("invasionPercent", 60, 0, 100);
+        builder.pop();
+
+        builder.push("multiplayer");
+        ENTRY_WINDOW_SECONDS = builder.comment("Duree (secondes) pendant laquelle d'autres joueurs peuvent rejoindre un portail ouvert.").defineInRange("entryWindowSeconds", 180, 10, 600);
+        MAX_PLAYERS_PER_GATE = builder.comment("Nombre maximum de joueurs pouvant entrer dans le meme portail.").defineInRange("maxPlayersPerGate", 4, 1, 16);
+        ENFORCE_RANK_REQUIREMENT = builder.comment("Si vrai, les joueurs dont le rang confirme est inferieur au rang du portail ne peuvent pas entrer.").define("enforceRankRequirement", true);
+        LIFETIME_PLAYER_SCALE = builder.comment("Multiplicateur de duree de vie du donjon par joueur supplementaire. 0.4 = +40% par joueur.").defineInRange("lifetimePlayerScale", 0.4, 0.0, 2.0);
+        COMPLETION_CHEST_LIFETIME_SECONDS = builder.comment("Duree (secondes) pendant laquelle le coffre de recompense reste accessible apres completion.").defineInRange("completionChestLifetimeSeconds", 120, 30, 600);
         builder.pop();
 
         SPEC = builder.build();

@@ -57,6 +57,7 @@
   "sologates.message.gate_already_started": "This gate has already started.",
   "sologates.message.gate_already_waiting": "You are already waiting for this gate.",
   "sologates.message.gate_player_joined": "%1$s joined the gate! (%2$s waiting)",
+  "sologates.message.gate_full": "This gate is already full (%1$s/%2$s players).",
   "sologates.message.gate_closing_warning": "%1$s closing in %2$ss! Last chance to join.",
   "sologates.message.gate_starting": "Gate starting with %1$s player(s)!",
   "sologates.message.player_died_gate": "%1$s fell in the dungeon! (%2$s remaining)",

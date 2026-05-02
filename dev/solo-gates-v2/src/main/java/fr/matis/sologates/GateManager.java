@@ -66,7 +66,7 @@ public final class GateManager {
             if (gate.failed) { toRemove.add(gate.id); continue; }
 
             if (gate.completed) {
-                long completedLifetime = 2400L;
+                long completedLifetime = SoloGatesConfig.COMPLETION_CHEST_LIFETIME_SECONDS.get() * 20L;
                 ServerLevel dungeon = overworld.getServer().getLevel(DUNGEON_LEVEL);
                 boolean hasPlayers = dungeon != null &&
                     !dungeon.getEntitiesOfClass(ServerPlayer.class,
@@ -194,7 +194,8 @@ public final class GateManager {
         // Rang requis : rang confirmé du joueur doit être >= rang de la gate
         PlayerSavedData psdCheck = PlayerSavedData.get(overworld.getServer());
         PlayerData pdCheck = psdCheck.getOrCreate(player.getUUID());
-        if (pdCheck.confirmedRank().ordinal() < record.rank.ordinal()) {
+        if (SoloGatesConfig.ENFORCE_RANK_REQUIREMENT.get() &&
+                pdCheck.confirmedRank().ordinal() < record.rank.ordinal()) {
             player.displayClientMessage(Component.translatable("sologates.message.rank_required",
                 record.rank.displayName()).withStyle(ChatFormatting.RED), true);
             return;
@@ -202,6 +203,14 @@ public final class GateManager {
 
         // Already inside
         if (record.activeParticipants.contains(player.getUUID())) return;
+
+        // Gate full
+        if (record.activeParticipants.size() >= SoloGatesConfig.MAX_PLAYERS_PER_GATE.get()) {
+            player.displayClientMessage(Component.translatable("sologates.message.gate_full",
+                record.activeParticipants.size(), SoloGatesConfig.MAX_PLAYERS_PER_GATE.get())
+                .withStyle(ChatFormatting.RED), true);
+            return;
+        }
 
         // Entry window closed (gate started but join period over)
         if (record.entryStarted && overworld.getGameTime() >= record.entryWindowEndTick) {
@@ -222,7 +231,8 @@ public final class GateManager {
         if (!record.entryStarted) {
             // First player: build dungeon immediately and open join window
             record.entryStarted = true;
-            record.entryWindowEndTick = overworld.getGameTime() + 3600L; // 180s
+            int entryWindowSecs = SoloGatesConfig.ENTRY_WINDOW_SECONDS.get();
+            record.entryWindowEndTick = overworld.getGameTime() + entryWindowSecs * 20L;
             record.dungeonStartTick = overworld.getGameTime();
             data.setDirty();
 
@@ -230,7 +240,7 @@ public final class GateManager {
 
             // Broadcast to nearby players (excluding the opener)
             Component openMsg = Component.translatable("sologates.message.gate_entry_open",
-                player.getName(), record.rank.displayName(), 180).withStyle(ChatFormatting.GOLD);
+                player.getName(), record.rank.displayName(), entryWindowSecs).withStyle(ChatFormatting.GOLD);
             overworld.getEntitiesOfClass(ServerPlayer.class, new AABB(record.overworldPos).inflate(128, 64, 128))
                 .stream().filter(p -> !p.getUUID().equals(player.getUUID()))
                 .forEach(p -> p.displayClientMessage(openMsg, false));
@@ -265,7 +275,7 @@ public final class GateManager {
 
     private static long getScaledLifetime(GateRecord gate) {
         long base = Math.min(SoloGatesConfig.GATE_LIFETIME_SECONDS.get(), 300) * 20L;
-        return Math.round(base * (1.0 + (gate.playerCount - 1) * 0.4));
+        return Math.round(base * (1.0 + (gate.playerCount - 1) * SoloGatesConfig.LIFETIME_PLAYER_SCALE.get()));
     }
 
     public static boolean spawnManualGate(ServerPlayer player, GateRank rank) {

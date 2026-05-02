@@ -1,13 +1,12 @@
 {
-  "type": "minecraft:overworld",
+  "type": "sologates:dungeon",
   "generator": {
     "type": "minecraft:flat",
     "settings": {
       "biome": "minecraft:deep_dark",
       "layers": [
         { "block": "minecraft:bedrock", "height": 1 },
-        { "block": "minecraft:deepslate", "height": 5 },
-        { "block": "minecraft:stone", "height": 58 }
+        { "block": "minecraft:air", "height": 255 }
       ],
       "structure_overrides": []
     }
