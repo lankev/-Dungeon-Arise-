@@ -8,7 +8,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public final class SoloGatesCommands {
 
@@ -47,6 +53,8 @@ public final class SoloGatesCommands {
                             .executes(ctx -> setRank(ctx.getSource(),
                                 StringArgumentType.getString(ctx, "player"),
                                 StringArgumentType.getString(ctx, "rank"))))))
+                .then(Commands.literal("criminals")
+                    .executes(ctx -> showCriminals(ctx.getSource())))
                 .then(Commands.literal("crimestat")
                     .executes(ctx -> showCrimeStat(ctx.getSource(), null))
                     .then(Commands.literal("get")
@@ -185,9 +193,10 @@ public final class SoloGatesCommands {
             target.getName(), Component.literal(rank.name()).withStyle(rank.color())), true);
         target.displayClientMessage(Component.translatable("sologates.message.rank_promoted",
             Component.literal(rank.name()).withStyle(rank.color())).withStyle(ChatFormatting.GOLD), false);
-        Component broadcast = Component.translatable("sologates.message.rank_broadcast",
-            target.getName(),
-            Component.literal(rank.name()).withStyle(rank.color()));
+        Component broadcast = rank == GateRank.S
+            ? Component.translatable("sologates.broadcast.rank_s", target.getName()).withStyle(ChatFormatting.GOLD)
+            : Component.translatable("sologates.message.rank_broadcast",
+                target.getName(), Component.literal(rank.name()).withStyle(rank.color()));
         source.getServer().getPlayerList().broadcastSystemMessage(broadcast, false);
         return 1;
     }
@@ -215,6 +224,41 @@ public final class SoloGatesCommands {
         source.sendSuccess(() -> Component.translatable("sologates.command.crimestat_set",
             target.getName(), Component.literal(String.valueOf(level)).withStyle(crimeColor(level))), true);
         return 1;
+    }
+
+    private static int showCriminals(CommandSourceStack source) {
+        CrimeSavedData data = CrimeSavedData.get(source.getServer());
+        List<Map.Entry<UUID, CrimeStatData>> criminals = data.allEntries().entrySet().stream()
+            .filter(e -> e.getValue().level() > 0)
+            .sorted(Comparator.comparingInt((Map.Entry<UUID, CrimeStatData> e) -> e.getValue().level()).reversed())
+            .toList();
+
+        if (criminals.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable("sologates.command.no_criminals")
+                .withStyle(ChatFormatting.GREEN), false);
+            return 1;
+        }
+
+        source.sendSuccess(() -> Component.translatable("sologates.command.criminals_header")
+            .withStyle(ChatFormatting.RED), false);
+        for (Map.Entry<UUID, CrimeStatData> entry : criminals) {
+            String name = resolvePlayerName(source.getServer(), entry.getKey());
+            int level = entry.getValue().level();
+            Component line = Component.translatable("sologates.command.criminals_entry",
+                Component.literal(name).withStyle(ChatFormatting.WHITE),
+                Component.literal("Crime Stat " + level).withStyle(crimeColor(level)));
+            source.sendSuccess(() -> line, false);
+        }
+        return 1;
+    }
+
+    private static String resolvePlayerName(MinecraftServer server, UUID uuid) {
+        ServerPlayer online = server.getPlayerList().getPlayer(uuid);
+        if (online != null) return online.getName().getString();
+        return server.getProfileCache()
+            .get(uuid)
+            .map(com.mojang.authlib.GameProfile::getName)
+            .orElse(uuid.toString().substring(0, 8));
     }
 
     private static ServerPlayer findTarget(CommandSourceStack source, String targetName) throws com.mojang.brigadier.exceptions.CommandSyntaxException {

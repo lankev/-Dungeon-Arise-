@@ -5,6 +5,7 @@ import fr.matis.sologates.SoloGates;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -64,8 +65,18 @@ public class HunterRankHud {
         }
 
         if (hasStreak) {
+            boolean flashing = ClientPlayerData.isStreakFlashing();
+            if (ClientPlayerData.takePendingStreakSound() && mc.player != null) {
+                mc.player.playSound(SoundEvents.PLAYER_LEVELUP, 0.4f, 2.0f);
+            }
+            if (flashing) {
+                g.fill(x + 1, nextLineY - 1, x + panelW - 1, nextLineY + 9, 0x44FFAA00);
+            }
+            int streakColor = flashing
+                ? ((System.currentTimeMillis() % 400 < 200) ? 0xFFFFFF : 0xFFDD00)
+                : 0xFFAA00;
             String streakText = "Serie x" + streak;
-            g.drawString(font, streakText, x + 4, nextLineY, 0xFFAA00, false);
+            g.drawString(font, streakText, x + 4, nextLineY, streakColor, false);
         }
     }
 

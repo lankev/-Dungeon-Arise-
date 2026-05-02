@@ -27,6 +27,10 @@ public class CrimeSavedData extends SavedData {
         return Optional.ofNullable(players.get(playerId));
     }
 
+    public Map<UUID, CrimeStatData> allEntries() {
+        return java.util.Collections.unmodifiableMap(players);
+    }
+
     @Override
     public CompoundTag save(CompoundTag tag) {
         ListTag list = new ListTag();

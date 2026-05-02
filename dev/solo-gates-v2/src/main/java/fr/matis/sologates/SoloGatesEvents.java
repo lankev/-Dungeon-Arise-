@@ -5,8 +5,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import fr.matis.sologates.network.SoloGatesNetwork;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -29,7 +31,12 @@ public final class SoloGatesEvents {
         }
         if (tick % 600 == 0) {
             ServerLevel overworld = event.getServer().getLevel(Level.OVERWORLD);
-            if (overworld != null) GateManager.sendMobCountUpdates(overworld);
+            if (overworld != null) {
+                GateManager.sendMobCountUpdates(overworld);
+                ServerLevel dungeon = event.getServer().getLevel(GateManager.DUNGEON_LEVEL);
+                if (dungeon != null)
+                    GateManager.retargetMobsToCriminals(dungeon, GateSavedData.get(event.getServer()));
+            }
         }
     }
 
@@ -58,6 +65,11 @@ public final class SoloGatesEvents {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         CrimeStatManager.syncCrimeStat(player);
+        CrimeSavedData crimeData = CrimeSavedData.get(player.server);
+        crimeData.allEntries().forEach((uuid, data) -> {
+            if (data.level() > 0)
+                SoloGatesNetwork.sendCrimeStatToPlayer(player, uuid, data.level());
+        });
         // Si le joueur était dans le donjon au moment de la déconnexion, le renvoyer en Overworld
         if (player.serverLevel().dimension().equals(GateManager.DUNGEON_LEVEL)) {
             if (!GateManager.leaveDungeon(player)) {
@@ -70,6 +82,15 @@ public final class SoloGatesEvents {
                         player.getYRot(), player.getXRot());
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingAttack(LivingAttackEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer victim)) return;
+        if (!(event.getSource().getEntity() instanceof ServerPlayer)) return;
+        if (victim.serverLevel().dimension().equals(GateManager.DUNGEON_LEVEL)) {
+            event.setCanceled(false);
         }
     }
 

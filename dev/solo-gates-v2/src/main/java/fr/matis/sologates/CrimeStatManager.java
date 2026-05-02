@@ -50,6 +50,7 @@ public final class CrimeStatManager {
         PlayerSavedData psd = PlayerSavedData.get(player.server);
         PlayerData pd = psd.getOrCreate(player.getUUID());
         SoloGatesNetwork.sendRankToPlayer(player, pd.confirmedRank(), pd.currentStreak());
+        SoloGatesNetwork.broadcastCrimeStat(player.server, player.getUUID(), crimeLevel(player));
     }
 
     private static void applyInnocentKill(ServerPlayer killer, ServerPlayer victim, CrimeStatData killerCrime, long gameTime) {
@@ -99,6 +100,11 @@ public final class CrimeStatManager {
             .withStyle(ChatFormatting.RED), false);
         killer.displayClientMessage(Component.translatable("sologates.crime.bounty_claimed", transferred)
             .withStyle(ChatFormatting.GOLD), false);
+        if (bounty >= 3) {
+            Component bc = Component.translatable("sologates.broadcast.cs3_eliminated",
+                killer.getName(), victim.getName()).withStyle(ChatFormatting.DARK_RED);
+            killer.server.getPlayerList().broadcastSystemMessage(bc, false);
+        }
     }
 
     private static int transferSkillPoints(ServerPlayer from, ServerPlayer to, int requested) {

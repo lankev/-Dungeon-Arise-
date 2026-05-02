@@ -324,7 +324,6 @@ public final class GateManager {
     private static void useReturnGate(ServerPlayer player, BlockPos clickedPos) {
         ServerLevel level = player.serverLevel();
         GateSavedData data = GateSavedData.get(level.getServer());
-        BlockPos target = clickedPos; // clicked on the return portal
         Optional<GateRecord> gateOpt = data.gates().stream()
             .filter(r -> r.completed)
             .filter(r -> r.dungeonPos.offset(0, 1, -5).distSqr(clickedPos) <= 36.0)
@@ -415,6 +414,32 @@ public final class GateManager {
         if (!serverLevel.dimension().equals(DUNGEON_LEVEL)) return false;
         GateSavedData data = GateSavedData.get(serverLevel.getServer());
         return data.gates().stream().anyMatch(g -> g.dungeonPos.distSqr(pos) <= 9216.0);
+    }
+
+    // -------------------------------------------------------------------------
+    // Criminal mob aggro
+    // -------------------------------------------------------------------------
+
+    private static void retargetToCriminalIfPresent(Mob mob, ServerLevel dungeon, GateRecord gate) {
+        dungeon.getEntitiesOfClass(ServerPlayer.class, new AABB(gate.dungeonPos).inflate(64, 16, 64))
+            .stream()
+            .filter(p -> CrimeStatManager.crimeLevel(p) > 0)
+            .findFirst()
+            .ifPresent(mob::setTarget);
+    }
+
+    public static void retargetMobsToCriminals(ServerLevel dungeon, GateSavedData data) {
+        for (GateRecord gate : data.gates()) {
+            if (gate.completed || gate.failed || gate.mobs.isEmpty()) continue;
+            AABB area = new AABB(gate.dungeonPos).inflate(64, 16, 64);
+            List<ServerPlayer> criminals = dungeon.getEntitiesOfClass(ServerPlayer.class, area)
+                .stream()
+                .filter(p -> CrimeStatManager.crimeLevel(p) > 0)
+                .toList();
+            if (criminals.isEmpty()) continue;
+            ServerPlayer target = criminals.get(0);
+            dungeon.getEntitiesOfClass(Mob.class, area).forEach(mob -> mob.setTarget(target));
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -1396,6 +1421,7 @@ public final class GateManager {
                     applyHealthMultiplier(mob, gate);
                     mob.setPersistenceRequired();
                     dungeon.addFreshEntity(mob);
+                    retargetToCriminalIfPresent(mob, dungeon, gate);
                     gate.mobs.add(mob.getUUID());
                 }
             });
@@ -1433,6 +1459,7 @@ public final class GateManager {
                     applyHealthMultiplier(mob, gate);
                     mob.setPersistenceRequired();
                     dungeon.addFreshEntity(mob);
+                    retargetToCriminalIfPresent(mob, dungeon, gate);
                     gate.mobs.add(mob.getUUID());
                 }
             });
@@ -1456,6 +1483,7 @@ public final class GateManager {
                     applyHealthMultiplier(mob, gate);
                     mob.setPersistenceRequired();
                     dungeon.addFreshEntity(mob);
+                    retargetToCriminalIfPresent(mob, dungeon, gate);
                     gate.mobs.add(mob.getUUID());
                 }
             });
@@ -1545,10 +1573,16 @@ public final class GateManager {
         ServerLevel dungeon = overworld.getServer().getLevel(DUNGEON_LEVEL);
         if (dungeon != null) {
             placeReturnGate(dungeon, gate);
-            for (ServerPlayer player : dungeon.getEntitiesOfClass(ServerPlayer.class,
-                    new AABB(gate.dungeonPos).inflate(64, 16, 64))) {
+            List<ServerPlayer> inside = dungeon.getEntitiesOfClass(ServerPlayer.class,
+                new AABB(gate.dungeonPos).inflate(64, 16, 64));
+            for (ServerPlayer player : inside) {
                 player.displayClientMessage(
                     Component.translatable("sologates.message.dungeon_complete").withStyle(ChatFormatting.GREEN), false);
+            }
+            if (gate.bossGate && !inside.isEmpty()) {
+                Component bc = Component.translatable("sologates.broadcast.boss_complete", inside.get(0).getName())
+                    .withStyle(ChatFormatting.GOLD);
+                overworld.getServer().getPlayerList().broadcastSystemMessage(bc, false);
             }
         }
         removeGateBlocks(overworld, gate.overworldPos);
